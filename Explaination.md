@@ -112,12 +112,13 @@ Choose the threshold `τ` relative to the point cloud's scale and density.
 
 ## Appendix: Quick-Start Checklist
 
-1.  **Verify Units:** Confirm the units of your point clouds (e.g., meters, millimeters).
-2.  **Choose Threshold `τ`:** Select `τ` based on the estimated point spacing in your ground-truth data.
+1.  **Verify Units:** Confirm the units of our point clouds (e.g., meters? I guess millimeters).
+2.  **Choose Threshold `τ`:** Select `τ` based on the estimated point spacing in our HE ground-truth data (still doesn't know how).
 3.  **Compute Distances:** Use a KD-tree to compute nearest-neighbor distances for both A→B and B→A.
 4.  **Calculate Metrics:**
     - Compute Precision, Recall, and F-Score using the threshold `τ`.
     - Compute Chamfer Distance (mean of squared distances).
     - Compute Hausdorff Distance (max of nearest-neighbor distances).
+
 
 ***
