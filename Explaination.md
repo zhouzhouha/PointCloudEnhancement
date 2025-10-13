@@ -1,10 +1,9 @@
-Of course! Here is the provided content converted into English and formatted as a ready-to-copy-and-paste README file.
 
 ***
 
 # Point Cloud Evaluation Metrics
 
-A comprehensive guide to common metrics for evaluating the quality of a reconstructed point cloud against a ground-truth point cloud.
+A comprehensive guide to common geometric metrics for evaluating the quality of a reconstructed point cloud against a ground-truth point cloud.
 
 ## 1. Setup and Notation
 
@@ -122,3 +121,4 @@ Choose the threshold `τ` relative to the point cloud's scale and density.
 
 
 ***
+
