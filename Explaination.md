@@ -81,17 +81,13 @@ The symmetric Hausdorff distance is defined as:
 Choose the threshold `τ` relative to the point cloud's scale and density.
 
 - **Heuristic:** Estimate the average nearest-neighbor spacing in the ground-truth cloud. Pick `τ` as a multiple (e.g., 1–3×) of that spacing.
-- **Examples:**
-    - Small object scans: `τ` might be on the millimeter scale.
-    - Large outdoor scenes: `τ` might be tens of centimeters.
 
 ## 8. Implementation Notes
 
 - **Efficiency:** Use a KD-tree (e.g., `scipy.spatial.cKDTree`) for efficient nearest-neighbor queries.
 - **Large Point Clouds:** For large datasets, consider subsampling or using GPU-accelerated implementations (e.g., for Chamfer Distance).
-- **Color Metrics:** To evaluate color:
-    - Treat RGB as extra dimensions (with careful normalization and weighting).
-    - Project point clouds to images and use image metrics like PSNR/SSIM.
+- **Color Metrics:** To do.
+   
 
 ## 9. Example Numeric Walkthrough
 
@@ -121,4 +117,5 @@ Choose the threshold `τ` relative to the point cloud's scale and density.
 
 
 ***
+
 
