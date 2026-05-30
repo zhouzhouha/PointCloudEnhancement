@@ -1,0 +1,169 @@
+import numpy as np
+from scipy.spatial import cKDTree as KDTree
+import trimesh
+import open3d as o3d
+
+"""
+Name conversion is 
+pointcloud_gt  --> ground truth point cloud
+pointcloud_lq  --> low quality point cloud or predicted point cloud
+"""
+
+def eval_pointcloud(pre_mesh_ply, gt_mesh_ply, eval_type, 
+                    thresholds=[5, 10, 20]):
+        if eval_type == 'ply':
+            pointcloud_gt = o3d.io.read_point_cloud(gt_mesh_ply)
+            pointcloud_lq = o3d.io.read_point_cloud(pre_mesh_ply)
+            pointcloud_gt_xyz = np.asarray(pointcloud_gt.points) 
+            pointcloud_lq_xyz = np.asarray(pointcloud_lq.points) 
+            # calulate the normals for gt pointcloud
+            pointcloud_gt.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=20))
+            pointcloud_lq.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=20))
+            normals_gt = np.asarray(pointcloud_gt.normals)
+            normals_lq = np.asarray(pointcloud_lq.normals)
+        # else:
+            # pointcloud_gt_xyz, normals_gt = sampleGT(gt_mesh_ply, samplepointsnum = )
+            # pointcloud_lq, normals_ql = sampleGT(pre_mesh_ply, samplepointsnum = samplepoint)
+
+        if pointcloud_lq_xyz.shape[0] == 0 or pointcloud_gt_xyz.shape[0] == 0:
+            out_dict = {
+                'N_Acc' : 0,
+                'N_Comp' : 0,
+                'normals': 0,
+                'CD_Acc' : 0,
+                'CD_Comp': 0,
+                'chamfer-L1': 0,
+                'chamfer-L2': 0,
+                'F_5': 0, 'P_5': 0, 'R_5': 0,
+                'F_10': 0, 'P_10': 0, 'R_10': 0,
+                'F_20': 0, 'P_20': 0, 'R_20': 0
+            }
+            return out_dict
+
+        completeness, completeness_normals = distance_p2p(
+            pointcloud_gt_xyz, normals_gt, pointcloud_lq_xyz, normals_lq
+        )
+        recall = get_threshold_percentage(completeness, thresholds)
+        completeness2 = completeness**2
+
+        completeness = completeness.mean()
+        completeness2 = completeness2.mean()
+        completeness_normals = completeness_normals.mean()
+
+        # Accuracy: how far are th points of the predicted pointcloud
+        # from the target pointcloud
+        accuracy, accuracy_normals = distance_p2p(
+            pointcloud_lq_xyz, normals_lq, pointcloud_gt_xyz, normals_gt
+        )
+        precision = get_threshold_percentage(accuracy, thresholds)
+        accuracy2 = accuracy**2
+
+        accuracy = accuracy.mean()
+        accuracy2 = accuracy2.mean()
+        accuracy_normals = accuracy_normals.mean()
+
+        # Chamfer distance
+        normals_correctness = (
+            0.5 * completeness_normals + 0.5 * accuracy_normals
+        )
+
+        chamferL2_old = 0.5 * (completeness + accuracy)
+        # F-Score
+        F = [2 * precision[i] * recall[i] / (precision[i] + recall[i]) for i in range(len(precision))]
+        
+        chamfer_l1 = chamfer_L1(pointcloud_lq_xyz, pointcloud_gt_xyz)
+        chamfer_l2 = chamfer_L2(pointcloud_lq_xyz, pointcloud_gt_xyz)
+        
+        
+
+        out_dict = {
+            'N_Acc' : accuracy_normals,
+            'N_Comp' : completeness_normals,
+            'normals': normals_correctness,
+            'CD_Acc' : accuracy,
+            'CD_Comp': completeness,
+            'chamferL2_old': chamferL2_old,
+            'chamfer-L1': chamfer_l1,
+            'chamfer-L2': chamfer_l2
+        }
+        
+        # Use the already-calculated precision and recall arrays (not the scalar means)
+        for i, tau in enumerate(thresholds):
+            P = precision[i]
+            R = recall[i]
+            F = 0 if (P + R == 0) else 2 * P * R / (P + R)
+            
+            out_dict[f'P_{tau}'] = P
+            out_dict[f'R_{tau}'] = R
+            out_dict[f'F_{tau}'] = F
+        return out_dict
+
+def chamfer_L1(points_src, points_tgt):
+    # X -> Y
+    dist_xy, _ = distance_p2p(points_src, None, points_tgt, None)
+    # Y -> X
+    dist_yx, _ = distance_p2p(points_tgt, None, points_src, None)
+
+    chamfer_l1 = dist_xy.mean() + dist_yx.mean()
+    return chamfer_l1
+
+def chamfer_L2(points_src, points_tgt):
+    # X -> Y
+    dist_xy, _ = distance_p2p(points_src, None, points_tgt, None)
+    # Y -> X
+    dist_yx, _ = distance_p2p(points_tgt, None, points_src, None)
+
+    chamfer_l2 = (dist_xy ** 2).mean() + (dist_yx ** 2).mean()
+    return chamfer_l2
+
+
+def distance_p2p(points_src, normals_src, points_tgt, normals_tgt):
+    ''' Computes minimal distances of each point in points_src to points_tgt.
+    Args:
+        points_src (numpy array): source points
+        normals_src (numpy array): source normals
+        points_tgt (numpy array): target points
+        normals_tgt (numpy array): target normals
+    '''
+    kdtree = KDTree(points_tgt)
+    dist, idx = kdtree.query(points_src, k=1, workers=-1)    # workers=-1 uses all CPUs and you may need to change this to GPU if you have the GPU
+
+    if normals_src is not None and normals_tgt is not None:
+        normals_src = \
+            normals_src / np.linalg.norm(normals_src, axis=-1, keepdims=True)
+        normals_tgt = \
+            normals_tgt / np.linalg.norm(normals_tgt, axis=-1, keepdims=True)
+
+        normals_dot_product = (normals_tgt[idx] * normals_src).sum(axis=-1)
+        # Handle normals that point into wrong direction gracefully
+        # (mostly due to mehtod not caring about this in generation)
+        normals_dot_product = np.abs(normals_dot_product)
+    else:
+        normals_dot_product = np.array(
+            [np.nan] * points_src.shape[0], dtype=np.float32)
+    return dist, normals_dot_product
+
+
+def get_threshold_percentage(dist, thresholds):
+    ''' Evaluates a point cloud.
+    Args:
+        dist (numpy array): calculated distance
+        thresholds (numpy array): threshold values for the F-score calculation
+    '''
+    in_threshold = [
+        (dist <= t).mean() for t in thresholds
+    ]
+    return in_threshold
+
+
+def sampleGT(filename, samplepointsnum):
+    ''' Sample a mesh, return points with normals.
+    Args:
+        filename (str): input mesh file
+        samplepointsnum (int): numbers of points to be sampled
+    '''
+    mesh = trimesh.load(filename)
+    mesh.fix_normals()  # ensuring outward normals
+    sample_random, index_random = trimesh.sample.sample_surface(mesh, samplepointsnum)
+    sample_normal = mesh.face_normals[index_random]
+    return sample_random, sample_normal

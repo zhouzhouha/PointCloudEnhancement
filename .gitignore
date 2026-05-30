@@ -1,0 +1,46 @@
+﻿# Python virtual environment
+venv/
+.venv/
+env/
+ENV/
+*.pyc
+*.py[cod]
+__pycache__/
+
+# Large data files and datasets
+*.ply
+*.pcd
+*.obj
+*.off
+*.stl
+*.mesh
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+UVG-CWI-DQPC/
+PointCloudCompletion_Papers/
+*.pdf
+data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+.pytest_cache/
+dataset/
+BouncingBlue_*/
+results/
+*_results.csv
+batch_results.csv
+Groundturth_results.csv
+.claude/
+codex.bat
+codex_cli.py

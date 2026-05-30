@@ -1,0 +1,3 @@
+[submodule "third_party/SCUTSurface"]
+	path = third_party/SCUTSurface
+	url = https://github.com/Gorilla-Lab-SCUT/SCUTSurface-code.git

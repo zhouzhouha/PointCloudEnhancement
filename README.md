@@ -1,64 +1,112 @@
-# PointCloudEnhancement – Evaluation Metrics
+# PointCloudEnhancement
 
-This repository provides a complete Python implementation for evaluating the quality of 3D point-clouds, especially for point-cloud enhancement, reconstruction, and completion tasks.  
-The metrics implemented here cover **accuracy**, **completeness**, **normal consistency**, **F-score**, and two types of **Chamfer distance**.
+This repository provides tools for point cloud quality evaluation and enhancement, built upon the [SCUTSurface benchmark](https://github.com/Gorilla-Lab-SCUT/SCUTSurface-code).
 
-The core evaluation logic is implemented in  
-`metrics.py`, which has been fully documented and explained in *Explanation.md*.
+## Overview
 
----
+The repository includes:
+- **Point cloud metrics computation**: Chamfer distance, Hausdorff distance, Precision/Recall/F-score
+- **SCUTSurface integration**: Complete surface reconstruction benchmark suite (in `third_party/SCUTSurface/`)
+  - Synthetic data generation (object-level and scene-level)
+  - Point cloud preprocessing (outlier removal, denoising, resampling)
+  - Reconstruction methods (SAL, IGR, LIG, Points2Surf, etc.)
+  - Evaluation metrics (vanilla and neural metrics)
 
-## 📦 Features
+## Quick Start
 
-The toolkit computes the following metrics between a **predicted** point cloud and a **ground-truth** point cloud:
+### Setup
 
-### **Geometry-based metrics**
-- **Accuracy (CD_Acc)**  
-  Mean nearest-neighbor distance from predicted → ground truth.
-- **Completeness (CD_Comp)**  
-  Mean nearest-neighbor distance from ground truth → predicted.
-- **Symmetric Chamfer distances**  
-  - `chamfer-L1` — L1 Chamfer distance (sum of mean distances in each direction)  
-  - `chamfer-L2` — L2 Chamfer distance (sum of squared mean distances)  
-  - `chamferL2_old` — legacy symmetric Chamfer = 0.5 × (accuracy + completeness)
+Clone the repository with submodules:
 
-### **Normal-based metrics**
-- **Normal Accuracy (N_Acc)**  
-  Cosine similarity between predicted normals and nearest neighbors in GT.
-- **Normal Completeness (N_Comp)**  
-  Cosine similarity from GT → predicted.
-- **Normal Correctness (normals)**  
-  Mean of the two normal terms (0.5 × N_Acc + 0.5 × N_Comp)
+```powershell
+git clone --recurse-submodules https://github.com/zhouzhouha/PointCloudEnhancement.git
+cd PointCloudEnhancement
+```
 
-### **F-Score family (threshold-based metrics)**
-Computed at configurable distance thresholds (default: `5, 10, 20` units):
+If you already cloned without `--recurse-submodules`, initialize the SCUTSurface submodule:
 
-For each τ:
-- **Precision Pτ** = ratio of predicted points within τ of GT  
-- **Recall Rτ** = ratio of GT points within τ of prediction  
-- **Fτ = 2PR/(P+R)**
+```powershell
+git submodule update --init --recursive
+```
 
-Example output keys:
-P_5, R_5, F_5
-P_10, R_10, F_10
-P_20, R_20, F_20
+### Using the Metrics Launcher
+--------
 
+Use the PowerShell launcher `run_metrics.ps1` from the repository root. The script will ensure
+the project's virtual environment exists, install `requirements.txt`, and run the metrics.
 
----
+Examples:
 
-## 🚀 Usage
+Run a single pair (PLY files):
 
-### **Function call**
-The core entry point is:
+```powershell
+.\run_metrics.ps1 -GtDir "UVG-CWI-DQPC/OrangeKettlebell/CG/15fps/OrangeKettlebell_..._0000.ply" -RecDir "UVG-CWI-DQPC/OrangeKettlebell/HE/15fps/OrangeKettlebell_..._0000.ply" -OutCsv onepair_results.csv -ColorWeight 0
+```
 
-```python
-from metrics import eval_pointcloud
+Run directories (matching basenames):
 
-results = eval_pointcloud(
-    pre_mesh_ply="pred.ply",
-    gt_mesh_ply="gt.ply",
-    samplepoint=,
-    eval_type=""
-)
+```powershell
+.\run_metrics.ps1 -GtDir "path\to\gt_dir" -RecDir "path\to\rec_dir" -OutCsv results.csv
+```
 
+Notes
+-----
+- The launcher has a `-ColorWeight` argument (default 0). Set to 0 to ignore color and compute
+  distances on XYZ only.
+- Use `-OutCsv` to control output path. Use `-Append` to append results to an existing CSV.
+- The venv is created at `./venv` and used automatically by the launcher.
 
+## SCUTSurface Integration
+
+The repository includes the complete SCUTSurface benchmark suite as a git submodule in `third_party/SCUTSurface/`.
+
+### Available Tools
+
+**1. Build Dataset**
+- **Scan & Synthesis** (object-level and scene-level):
+  - Generate synthetic scanned point clouds using BlenSor
+  - Support for various artifacts (noise, outliers, missing data, misalignment)
+  - See `third_party/SCUTSurface/build_dataset/scan_and_synthesis/`
+  
+- **Preprocessing**:
+  - Outlier removal (PCL required)
+  - Denoising (CGAL required)
+  - Resampling (FPS)
+  - Format conversion (TXT to PLY)
+  - See `third_party/SCUTSurface/build_dataset/preprocessing/`
+
+**2. Reconstruction Methods**
+- Multiple state-of-the-art methods included as submodules:
+  - SAL, IGR, DeepSDF, Occupancy Networks
+  - Local Implicit Grid (LIG), Points2Surf, DeepMLS
+  - See `third_party/SCUTSurface/reconstruction/`
+
+**3. Evaluation Metrics**
+- **Vanilla Metrics**: Chamfer Distance, F-score, Normal Consistency Score
+- **Neural Metrics**: Neural Feature Similarity (NFS)
+- See `third_party/SCUTSurface/metrics/`
+
+### Usage Examples
+
+For detailed instructions on each module, refer to the README files in the respective subdirectories:
+- [Preprocessing Guide](third_party/SCUTSurface/build_dataset/preprocessing/README.md)
+- [Object-level Scanning](third_party/SCUTSurface/build_dataset/scan_and_synthesis/object_level/README.md)
+- [Scene-level Scanning](third_party/SCUTSurface/build_dataset/scan_and_synthesis/scene_level/README.md)
+- [Metrics Evaluation](third_party/SCUTSurface/metrics/README.md)
+- [Reconstruction Methods](third_party/SCUTSurface/reconstruction/README.md)
+
+### Citation
+
+If you use SCUTSurface in your research, please cite:
+```
+@article{huang2024surface,
+  title={Surface Reconstruction Benchmark from Point Clouds: A Survey and a Benchmark},
+  author={Huang, Zhangjin and others},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year={2024}
+}
+```
+
+## License
+
+This project includes code from SCUTSurface (MIT License). See `third_party/SCUTSurface/LICENSE` for details.

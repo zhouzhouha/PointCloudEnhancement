@@ -367,5 +367,5 @@ results/
 
 See the main repository README and documentation:
 - [../README.md](../README.md)
-
-
+- [../TRADITIONAL_METHODS.md](../TRADITIONAL_METHODS.md)
+- [../SAL_SETUP.md](../SAL_SETUP.md)
