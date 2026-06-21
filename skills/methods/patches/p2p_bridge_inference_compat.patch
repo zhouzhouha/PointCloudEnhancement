@@ -1,0 +1,24 @@
+diff --git a/models/evaluation.py b/models/evaluation.py
+--- a/models/evaluation.py
++++ b/models/evaluation.py
+@@
+-import wandb
+-from metrics.metrics import calculate_cd, calculate_cd_cuda, calculate_emd_cuda, calculate_emd_exact_cuda
++import wandb
++try:
++    from metrics.metrics import calculate_cd, calculate_cd_cuda, calculate_emd_cuda, calculate_emd_exact_cuda
++except ModuleNotFoundError:
++    calculate_cd = calculate_cd_cuda = calculate_emd_cuda = calculate_emd_exact_cuda = None
+@@
+ def get_metrics(
+     gt: Tensor, pred: Tensor, model: Optional[torch.nn.Module] = None, fast: bool = True
+ ) -> Tuple[float, float, float]:
+@@
+     Returns:
+         Tuple[float, float, float]: Chamfer distance, Earth Mover's distance, and evaluation loss.
+     """
++    if calculate_cd is None:
++        raise RuntimeError("P2P-Bridge metric extensions are unavailable; denoising inference can still run.")
++
+     if pred.shape[-1] < pred.shape[-2]:
+         pred = pred.transpose(1, 2)
