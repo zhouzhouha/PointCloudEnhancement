@@ -1,5 +1,5 @@
 """
-Run vanilla_metric evaluation from SCUTSurface on OrangeKettlebell dataset.
+Run vanilla_metric evaluation from SCUTSurface on a UVG-CWI-DQPC sequence.
 Uses the metrics.py with eval_type='ply' for point cloud files.
 """
 
@@ -17,29 +17,43 @@ sys.path.insert(0, str(vanilla_metric_dir))
 from metrics import eval_pointcloud
 
 
-def run_evaluation(max_frames=10):
+DATASET_ROOT = Path("/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC")
+
+
+def frame_id(path):
+    """Return the zero-padded frame id at the end of a UVG-CWI-DQPC filename."""
+    return path.stem.rsplit("_", 1)[-1]
+
+
+def run_evaluation(max_frames=10, sequence="OrangeKettlebell", dataset_root=DATASET_ROOT):
     """
-    Run vanilla metric evaluation on OrangeKettlebell dataset.
+    Run vanilla metric evaluation on one UVG-CWI-DQPC sequence.
     """
     # Directories
-    cg_dir = base_dir / "dataset" / "UVG-CWI-DQPC" / "OrangeKettlebell" / "CG" / "15fps"
-    he_dir = base_dir / "dataset" / "UVG-CWI-DQPC" / "OrangeKettlebell" / "HE" / "15fps"
-    output_dir = base_dir / "results"
-    output_dir.mkdir(exist_ok=True)
+    cg_dir = Path(dataset_root) / sequence / "cg" / "15fps"
+    he_dir = Path(dataset_root) / sequence / "he" / "15fps"
+    output_dir = base_dir / "results" / "uvg_cwi_dqpc" / sequence
+    output_dir.mkdir(parents=True, exist_ok=True)
     
     # Find files
-    cg_files = sorted(cg_dir.glob("*.ply"))[:max_frames]
-    he_files = sorted(he_dir.glob("*.ply"))[:max_frames]
+    cg_by_frame = {frame_id(path): path for path in cg_dir.glob("*.ply")}
+    he_by_frame = {frame_id(path): path for path in he_dir.glob("*.ply")}
+    common_frames = sorted(set(cg_by_frame) & set(he_by_frame))
+    if max_frames is not None:
+        common_frames = common_frames[:max_frames]
     
-    if not cg_files or not he_files:
+    if not common_frames:
         print("ERROR: No files found!")
+        print(f"CG directory: {cg_dir}")
+        print(f"HE directory: {he_dir}")
         return
     
     print("="*80)
     print("VANILLA METRIC EVALUATION (from SCUTSurface)")
     print("="*80)
-    print(f"\nDataset: OrangeKettlebell")
-    print(f"Frames to evaluate: {max_frames}")
+    print(f"\nDataset root: {dataset_root}")
+    print(f"Sequence: {sequence}")
+    print(f"Frames to evaluate: {len(common_frames)}")
     print(f"Ground Truth (HE): {he_dir}")
     print(f"Low Quality (CG):  {cg_dir}")
     print()
@@ -50,8 +64,11 @@ def run_evaluation(max_frames=10):
     # Process each frame
     results = []
     
-    for i, (cg_file, he_file) in enumerate(zip(cg_files, he_files)):
-        print(f"[{i+1}/{max_frames}] Processing frame {i}...")
+    for i, frame in enumerate(common_frames):
+        cg_file = cg_by_frame[frame]
+        he_file = he_by_frame[frame]
+
+        print(f"[{i+1}/{len(common_frames)}] Processing frame {frame}...")
         print(f"  CG: {cg_file.name}")
         print(f"  HE: {he_file.name}")
         
@@ -60,13 +77,12 @@ def run_evaluation(max_frames=10):
             out_dict = eval_pointcloud(
                 pre_mesh_ply=str(cg_file),
                 gt_mesh_ply=str(he_file),
-                samplepoint=100000,  # Not used for 'ply' eval_type
                 eval_type='ply',     # Use 'ply' for point cloud files
                 thresholds=[5, 10, 20]
             )
             
             # Add frame info
-            out_dict['frame'] = i
+            out_dict['frame'] = frame
             out_dict['cg_file'] = cg_file.name
             out_dict['he_file'] = he_file.name
             
@@ -106,7 +122,7 @@ def run_evaluation(max_frames=10):
     df = df[cols_order]
     
     # Save to CSV
-    output_csv = output_dir / "orangekettlebell_vanilla_metrics.csv"
+    output_csv = output_dir / "per_frame_metrics.csv"
     df.to_csv(output_csv, index=False)
     
     print("="*80)
@@ -152,9 +168,17 @@ def main():
     parser = argparse.ArgumentParser(description="Run vanilla metric evaluation")
     parser.add_argument('--frames', type=int, default=10,
                        help='Number of frames to evaluate (default: 10)')
+    parser.add_argument('--sequence', default='OrangeKettlebell',
+                       help='UVG-CWI-DQPC sequence name (default: OrangeKettlebell)')
+    parser.add_argument('--dataset-root', default=str(DATASET_ROOT),
+                       help='Path to UVG-CWI-DQPC dataset root')
     args = parser.parse_args()
     
-    run_evaluation(max_frames=args.frames)
+    run_evaluation(
+        max_frames=args.frames,
+        sequence=args.sequence,
+        dataset_root=Path(args.dataset_root),
+    )
 
 
 if __name__ == "__main__":

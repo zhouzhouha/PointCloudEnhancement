@@ -85,7 +85,7 @@ def optimize_latent(latent, ds, itemindex, decoder, path, epoch,resolution,conf)
                                           overwrite=True)
         return  reconstruction
 
-def evaluate(network,exps_dir,experiment_name,timestamp, split_filename, epoch, conf, with_opt,resolution,compute_dist_to_gt):
+def evaluate(network,exps_dir,experiment_name,timestamp, split_filename, epoch, conf, with_opt,resolution,compute_dist_to_gt,mc_value):
 
     utils.mkdir_ifnotexists(os.path.join('../', exps_dir, experiment_name, timestamp, 'evaluation'))
     utils.mkdir_ifnotexists(os.path.join('../', exps_dir, experiment_name, timestamp, 'evaluation',split_filename.split('/')[-1].split('.json')[0]))
@@ -139,7 +139,7 @@ def evaluate(network,exps_dir,experiment_name,timestamp, split_filename, epoch, 
                          in_epoch=ds.npyfiles_mnfld[data[-1].item()].split('/')[-3] + '_' + ds.npyfiles_mnfld[data[-1].item()].split('/')[-1].split('.npy')[0] + '_before',
                          shapefile=ds.npyfiles_mnfld[data[-1].item()],
                          resolution=resolution,
-                         mc_value=0,
+                         mc_value=mc_value,
                          is_uniform_grid=True,
                          verbose=True,
                          save_html=False,
@@ -370,6 +370,7 @@ if __name__ == '__main__':
     arg_parser.add_argument('--gpu', type=str, default='auto', help='GPU to use [default: GPU auto].')
     arg_parser.add_argument('--with_opt', default=False, action="store_true", help='If set, optimizing latent with reconstruction Loss versus input scan')
     arg_parser.add_argument('--resolution', default=512, type=int, help='Grid resolution')
+    arg_parser.add_argument('--mc_value', default=0.0, type=float, help='Marching-cubes level')
     arg_parser.add_argument('--compute_dist_to_gt', default=False, action="store_true", help='Set to True for computing chamfer distance between reconstruction to gt meshes')
 
     args = arg_parser.parse_args()
@@ -420,7 +421,7 @@ if __name__ == '__main__':
         conf=conf,
         with_opt=args.with_opt,
         resolution=args.resolution,
-        compute_dist_to_gt=args.compute_dist_to_gt
+        compute_dist_to_gt=args.compute_dist_to_gt,
+        mc_value=args.mc_value
     )
-
 

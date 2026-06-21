@@ -1,0 +1,142 @@
+"""Run SuperPC inference-only smoke tests on selected UVG frames."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+import numpy as np
+
+import run_mag_selected_frames as common
+
+
+SUPERPC_ROOT = common.REPO_ROOT / "third_party" / "enhancement" / "SuperPC"
+DEFAULT_CKPT = SUPERPC_ROOT / "pretrained" / "tartanair_com.pth"
+
+
+def write_xyz(path: Path, points: np.ndarray) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.savetxt(path, points.astype(np.float32), fmt="%.6f")
+
+
+def read_xyz(path: Path) -> np.ndarray:
+    data = np.loadtxt(path, dtype=np.float32)
+    if data.ndim == 1:
+        data = data.reshape(1, -1)
+    return data[:, :3].astype(np.float32)
+
+
+def run_superpc(input_xyz: Path, save_dir: Path, args) -> Path:
+    env = os.environ.copy()
+    env["PYTHONPATH"] = f"{SUPERPC_ROOT}:{env.get('PYTHONPATH', '')}"
+    env.setdefault("TORCH_EXTENSIONS_DIR", str(Path(os.environ.get("TMPDIR", "/tmp")) / "torch_extensions_superpc"))
+    command = [
+        sys.executable,
+        "-u",
+        str(SUPERPC_ROOT / "test_superpc.py"),
+        "--dataset",
+        args.superpc_dataset,
+        "--inference_only",
+        "true",
+        "--input_pc_path",
+        str(input_xyz),
+        "--ckpt_path",
+        str(args.checkpoint.resolve()),
+        "--use_vision_conditioning",
+        "false",
+        "--num_points",
+        str(args.num_points),
+        "--target_num_points",
+        str(args.target_num_points),
+        "--sampling_steps",
+        str(args.sampling_steps),
+        "--save_dir",
+        str(save_dir),
+        "--save_pc",
+        "true",
+        "--metric_align_mode",
+        "nn",
+    ]
+    subprocess.run(command, cwd=str(SUPERPC_ROOT), env=env, check=True)
+    generated = save_dir / input_xyz.stem / "generated.xyz"
+    if not generated.exists():
+        raise FileNotFoundError(generated)
+    return generated
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Run SuperPC selected UVG frames")
+    parser.add_argument("--sequence", default="OrangeKettlebell")
+    parser.add_argument("--frames", nargs="+", default=["0000"])
+    parser.add_argument("--dataset-root", type=Path, default=common.DATASET_ROOT)
+    parser.add_argument("--method-name", default="superpc_tartanair_novision_4x")
+    parser.add_argument("--checkpoint", type=Path, default=DEFAULT_CKPT)
+    parser.add_argument("--superpc-dataset", default="tartanair", choices=["shapenet", "tartanair", "kitti360"])
+    parser.add_argument("--num-points", type=int, default=11520)
+    parser.add_argument("--target-num-points", type=int, default=46080)
+    parser.add_argument("--sampling-steps", type=int, default=25)
+    args = parser.parse_args()
+
+    if not args.checkpoint.exists():
+        raise FileNotFoundError(args.checkpoint)
+
+    work_root = common.REPO_ROOT / "results" / "work" / args.method_name / args.sequence / "15fps"
+    out_root = common.REPO_ROOT / "results" / "method_outputs" / args.method_name / args.sequence / "15fps"
+    metric_root = common.REPO_ROOT / "results" / "uvg_cwi_dqpc" / args.sequence / args.method_name
+    for path in [work_root, out_root, metric_root]:
+        path.mkdir(parents=True, exist_ok=True)
+
+    rows = []
+    comparisons = []
+    counts = []
+    cg_dir = args.dataset_root / args.sequence / "cg" / "15fps"
+    he_dir = args.dataset_root / args.sequence / "he" / "15fps"
+
+    for frame in args.frames:
+        cg = common.find_frame(cg_dir, frame)
+        he = common.find_frame(he_dir, frame)
+        source_points, source_colors = common.read_uvg_xyzrgb(cg)
+        frame_stem = f"{args.sequence}_frame_{frame}"
+        input_xyz = work_root / "input" / f"{frame_stem}.xyz"
+        save_dir = work_root / "superpc_outputs"
+        write_xyz(input_xyz, source_points)
+        generated_xyz = run_superpc(input_xyz, save_dir, args)
+        enhanced_points = read_xyz(generated_xyz)
+        enhanced_colors = common.transfer_nearest_colors(source_points, source_colors, enhanced_points)
+        out = out_root / f"frame_{frame}.ply"
+        common.write_xyzrgb_ply(out, enhanced_points, enhanced_colors)
+        counts.append({"frame": frame, "input_points": len(source_points), "output_points": len(enhanced_points), "has_color": True})
+        print(f"{frame}: {len(source_points)} -> {len(enhanced_points)} points, output={out}", flush=True)
+
+        baseline = common.eval_pointcloud(str(cg), str(he), samplepoint=0, eval_type="ply", thresholds=[5, 10, 20])
+        method_metrics = common.eval_pointcloud(str(out), str(he), samplepoint=0, eval_type="ply", thresholds=[5, 10, 20])
+        rows.append({"method": "cg_baseline", "sequence": args.sequence, "frame": frame, "pred_file": str(cg), "gt_file": str(he), **baseline})
+        rows.append({"method": args.method_name, "sequence": args.sequence, "frame": frame, "pred_file": str(out), "gt_file": str(he), **method_metrics})
+        for metric in baseline:
+            delta, improved = common.compare_metric(metric, baseline[metric], method_metrics[metric])
+            comparisons.append({"frame": frame, "metric": metric, "baseline": baseline[metric], args.method_name: method_metrics[metric], "delta_for_better": delta, f"{args.method_name}_improved": improved})
+
+    metric_names = [key for key in rows[0] if key not in {"method", "sequence", "frame", "pred_file", "gt_file"}]
+    with (metric_root / "per_frame_metrics.csv").open("w", newline="", encoding="ascii") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["method", "sequence", "frame", "pred_file", "gt_file", *metric_names])
+        writer.writeheader()
+        writer.writerows(rows)
+    with (metric_root / f"baseline_vs_{args.method_name}_by_frame.csv").open("w", newline="", encoding="ascii") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["frame", "metric", "baseline", args.method_name, "delta_for_better", f"{args.method_name}_improved"])
+        writer.writeheader()
+        writer.writerows(comparisons)
+    with (metric_root / "point_counts.csv").open("w", newline="", encoding="ascii") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["frame", "input_points", "output_points", "has_color"])
+        writer.writeheader()
+        writer.writerows(counts)
+    common.write_summary(rows, metric_root / "summary_metrics.csv")
+    (metric_root / "run_config.json").write_text(json.dumps(vars(args), indent=2, default=str), encoding="ascii")
+
+
+if __name__ == "__main__":
+    main()

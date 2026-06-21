@@ -38,6 +38,12 @@ Thumbs.db
 dataset/
 BouncingBlue_*/
 results/
+logs/
+skills/third_party/
+third_party/enhancement/
+third_party/Point_cloud_quality_enhancement/
+third_party/metrics/
+third_party/UVG-CWI-Metric/
 *_results.csv
 batch_results.csv
 Groundturth_results.csv

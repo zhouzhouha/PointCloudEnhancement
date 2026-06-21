@@ -16,7 +16,8 @@ class SalTrainRunner(BaseTrainRunner):
 
             if epoch % 100 == 0:
                 self.save_checkpoints(epoch)
-            if epoch % self.conf.get_int('train.plot_frequency') == 0 and epoch >= 0:
+            plot_frequency = self.conf.get_int('train.plot_frequency')
+            if plot_frequency > 0 and epoch > 0 and epoch % plot_frequency == 0:
                 with torch.no_grad():
 
                     self.network.eval()
@@ -88,3 +89,5 @@ class SalTrainRunner(BaseTrainRunner):
             seconds_elapsed_epoch = end - start
             timing_log.append(seconds_elapsed_epoch)
 
+            if epoch == self.nepochs + 1:
+                self.save_checkpoints(epoch)

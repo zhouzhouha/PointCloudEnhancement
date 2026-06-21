@@ -1,0 +1,11 @@
+# Evaluation Metrics Status
+
+This file tracks evaluation metrics only. Enhancement-method provenance stays in
+`skills/methods/BENCHMARK_METHOD_STATUS.md`.
+
+| Metric | Paper / implementation link | Status | Notes |
+| --- | --- | --- | --- |
+| YUV PSNR | Standard color PSNR in YUV channels | Implemented; corrected smoke completed as `24007124`; selected-10 completed as `24007175` | Implemented in `scripts/run_texture_perceptual_metrics.py`. Uses nearest-neighbor correspondence from HE reference geometry to test geometry and BT.709 RGB-to-YUV conversion. Selected-10 output: `results/texture_perceptual_metrics/OrangeKettlebell/selected10/summary_texture_perceptual_metrics.csv`. |
+| Projection SSIM | Projection basis: Predicting the Perceptual Quality of Point Cloud: A 3D-to-2D Projection-Based Exploration | Implemented; corrected smoke completed as `24007124`; selected-10 completed as `24007175` | Implemented in `scripts/run_texture_perceptual_metrics.py`. Uses fixed six-view orthographic projection and direct image SSIM. Selected-10 output: `results/texture_perceptual_metrics/OrangeKettlebell/selected10/per_view_projection_metrics.csv`. |
+| Projection LPIPS | The Unreasonable Effectiveness of Deep Features as a Perceptual Metric; implementation: `https://github.com/richzhang/PerceptualSimilarity` | Implemented; corrected smoke completed as `24007124`; selected-10 completed as `24007175` | Implemented in `scripts/run_texture_perceptual_metrics.py` with `lpips` AlexNet backend and the same six projected views as SSIM. Selected-10 output: `results/texture_perceptual_metrics/OrangeKettlebell/selected10/summary_texture_perceptual_metrics.csv`. |
+| PCQM | PCQM: A Full-Reference Quality Metric for Colored 3D Point Clouds; implementation: `https://github.com/MEPP-team/PCQM` | Built; corrected smoke completed as `24007124`; selected-10 completed as `24007175` | External PCQM cloned and built at `third_party/metrics/PCQM/build/PCQM`; wrapper rewrites input PLYs to standard ASCII XYZRGB. Note: upstream README documents `reference registered`, but `main.cpp` assigns `argv[2]` as reference and `argv[1]` as registered, so the wrapper intentionally calls `PCQM pred ref ...` to make HE the reference. |
