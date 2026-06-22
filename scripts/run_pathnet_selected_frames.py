@@ -121,6 +121,7 @@ def main() -> None:
     parser.add_argument("--sequence", default="OrangeKettlebell")
     parser.add_argument("--frames", nargs="+", default=["0000"])
     parser.add_argument("--dataset-root", type=Path, default=common.DATASET_ROOT)
+    parser.add_argument("--results-root", type=Path, default=common.REPO_ROOT / "results")
     parser.add_argument("--method-name", default="pathnet_chunked")
     parser.add_argument("--chunk-size", type=int, default=50000)
     parser.add_argument("--batch-size", type=int, default=512)
@@ -135,8 +136,8 @@ def main() -> None:
         raise FileNotFoundError(PATHNET_CKPT)
 
     denoiser, analyser = load_pathnet(args.device)
-    out_root = common.REPO_ROOT / "results" / "method_outputs" / args.method_name / args.sequence / "15fps"
-    metric_root = common.REPO_ROOT / "results" / "uvg_cwi_dqpc" / args.sequence / args.method_name
+    out_root = args.results_root / "method_outputs" / args.method_name / args.sequence / "15fps"
+    metric_root = args.results_root / "uvg_cwi_dqpc" / args.sequence / args.method_name
     for path in [out_root, metric_root]:
         path.mkdir(parents=True, exist_ok=True)
 
