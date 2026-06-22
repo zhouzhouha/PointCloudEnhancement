@@ -41,7 +41,7 @@
         <td>Denoising</td>
         <td>CVPR 2024</td>
         <td><a href="https://openaccess.thecvf.com/content/CVPR2024/html/Mao_Denoising_Point_Clouds_in_Latent_Space_via_Graph_Convolution_and_CVPR_2024_paper.html">paper</a><br><a href="https://github.com/yanbiao1/PD-LTS">code</a></td>
-        <td><span class="mix">Smoke rerun submitted.</span> Official repo includes light and heavy pretrained checkpoints. First setup attempt <code>24097325</code> failed while compiling the custom Pila CUDA extension with conda CUDA headers; rerun <code>24097381</code> loads the Snellius CUDA module and runs the light FBM checkpoint on frame 0000 with XYZ-only input and RGB transferred back by nearest neighbor <code>k=1</code>.</td>
+        <td><span class="bad">Light and heavy smoke negative.</span> Official repo includes light and heavy pretrained FBM checkpoints, and both were run on frame 0000 with XYZ-only input plus RGB transferred back by nearest neighbor <code>k=1</code>. Light checkpoint improves only accuracy/precision and worsens completeness, Chamfer, and F-scores. Heavy checkpoint is worse on all listed geometry metrics: <code>chamfer-L1 50.1062 -> 51.3913</code>, <code>chamfer-L2 2098.37 -> 2192.21</code>, <code>F_10 0.2570 -> 0.2464</code>, <code>F_20 0.4866 -> 0.4726</code>. Read only if you want to decide whether a recent CVPR 2024 latent-space denoising method should be discussed despite negative benchmark evidence.</td>
       </tr>
       <tr>
         <td><strong>Pointfilter</strong></td>
