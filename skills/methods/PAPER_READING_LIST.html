@@ -44,13 +44,6 @@
         <td><span class="mix">Smoke rerun submitted.</span> Official repo includes light and heavy pretrained checkpoints. First setup attempt <code>24097325</code> failed while compiling the custom Pila CUDA extension with conda CUDA headers; rerun <code>24097381</code> loads the Snellius CUDA module and runs the light FBM checkpoint on frame 0000 with XYZ-only input and RGB transferred back by nearest neighbor <code>k=1</code>.</td>
       </tr>
       <tr>
-        <td><strong>PUDM</strong></td>
-        <td>Diffusion upsampling</td>
-        <td>CVPR 2024</td>
-        <td><a href="https://github.com/QWTforGithub/PUDM">paper/code</a></td>
-        <td><span class="mix">You marked it suitable, but selected-10 geometry is mostly negative.</span> Texture/perceptual is mixed-positive. Read again for dense-scene mismatch and whether to include as a diffusion upsampling comparison.</td>
-      </tr>
-      <tr>
         <td><strong>Pointfilter</strong></td>
         <td>Denoising/filtering</td>
         <td>IEEE TVCG 2020</td>
@@ -96,6 +89,7 @@
     <tbody>
       <tr><td><strong>PC2-PU</strong></td><td>Upsampling</td><td>ACM MM 2022</td><td><a href="https://arxiv.org/abs/2109.09337">paper</a><br><a href="https://github.com/chenlongwhu/PC2-PU">code</a></td><td><span class="good">Included.</span> Texture/perceptual is positive and geometry is weak-mixed: improves CD_Acc, Chamfer-L1, F10, F20, YUV-PSNR, projection SSIM, LPIPS, and PCQM, while CD_Comp and Chamfer-L2 worsen.</td></tr>
       <tr><td><strong>P2P-Bridge</strong></td><td>Denoising</td><td>ECCV 2024</td><td><a href="https://arxiv.org/abs/2408.16325">paper</a><br><a href="https://github.com/matvogel/P2P-Bridge">code</a></td><td><span class="good">Included.</span> You read and selected it for the survey. Smoke was mixed/positive on frame 0000; selected-10 job <code>24093763</code> is still running. Benchmark uses the point-cloud-only XYZ path; image/color/DINOv2 features are optional extensions outside the current point-cloud-only comparison.</td></tr>
+      <tr><td><strong>PUDM</strong></td><td>Diffusion upsampling</td><td>CVPR 2024</td><td><a href="https://github.com/QWTforGithub/PUDM">paper/code</a></td><td><span class="good">Included.</span> You read <em>A Conditional Denoising Diffusion Probabilistic Model for Point Cloud Upsampling</em> and selected it for the survey. Selected-10 geometry is mixed/mostly negative, but texture/perceptual is mixed-positive, so keep it as the diffusion upsampling comparison.</td></tr>
       <tr><td><strong>PUCRN</strong></td><td>Upsampling</td><td>ACCV 2022</td><td><a href="https://arxiv.org/abs/2210.03942">paper</a><br><a href="https://github.com/hikvision-research/3DVision/tree/main/PointUpsampling/PUCRN">code</a></td><td><span class="good">Included.</span> Selected-10 positive on geometry and texture/perceptual. You already read and marked suitable.</td></tr>
       <tr><td><strong>RepKPU</strong></td><td>Upsampling</td><td>CVPR 2024</td><td><a href="https://openaccess.thecvf.com/content/CVPR2024/papers/Rong_RepKPU_Point_Cloud_Upsampling_with_Kernel_Point_Representation_and_Deformation_CVPR_2024_paper.pdf">paper</a><br><a href="https://github.com/EasyRy/RepKPU">code</a></td><td><span class="good">Included.</span> Selected-10 geometry positive; texture/perceptual computed in the upsampling-candidates batch.</td></tr>
       <tr><td><strong>SPU-PMD</strong></td><td>Self-supervised upsampling</td><td>CVPR 2024</td><td><a href="https://github.com/lyz21/SPU-PMD">paper/code</a></td><td><span class="good">Included.</span> Selected-10 geometry positive and texture/perceptual mostly positive.</td></tr>
