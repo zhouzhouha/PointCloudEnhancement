@@ -28,7 +28,7 @@
 <main>
   <h1>Final Point Cloud Enhancement Papers To Check</h1>
   <p>Updated 2026-06-22 for the UVG-CWI-DQPC <code>OrangeKettlebell</code> selected-10 benchmark. This is the canonical merged reading list; the older dated duplicate has been removed. Scope: point-cloud-only enhancement, degraded point cloud in and enhanced point cloud out.</p>
-  <div class="note">Read priority is based on what you have already finished reading, what you explicitly excluded, and which remaining methods still need a paper-level inclusion decision because the benchmark result is mixed, negative, or blocked.</div>
+  <div class="note">Current decision: the six methods that were in <strong>Strong Candidates To Read For Final 20</strong>, plus <strong>PC2-PU</strong>, are now included in the survey paper. SuperPC and FBNet remain excluded by scope; TULIP has been removed because it is LiDAR range-image upsampling, not direct point-cloud enhancement for dense RGB point clouds.</div>
 
   <h2>Read Next: Decision Needed</h2>
   <table>
@@ -44,11 +44,11 @@
         <td><span class="mix">Smoke mixed/positive.</span> Frame 0000 improves CD_Acc, Chamfer-L1/L2, precision, and F20, but worsens completeness, recall, and F10. Selected-10 is now running as job <code>24093763</code>. Read to decide if diffusion-bridge denoising belongs in the survey even if dense-frame recall drops.</td>
       </tr>
       <tr>
-        <td><strong>PC2-PU</strong></td>
-        <td>Upsampling</td>
-        <td>ACM MM 2022</td>
-        <td><a href="https://arxiv.org/abs/2109.09337">paper</a><br><a href="https://github.com/chenlongwhu/PC2-PU">code</a></td>
-        <td><span class="good">Texture/perceptual positive, geometry weak-mixed.</span> Selected-10 improves CD_Acc, Chamfer-L1, F10, F20, YUV-PSNR, projection SSIM, LPIPS, and PCQM, but worsens CD_Comp and Chamfer-L2. Read before deciding if it is in the final 20.</td>
+        <td><strong>PD-LTS</strong><br><span class="tag">new</span></td>
+        <td>Denoising</td>
+        <td>CVPR 2024</td>
+        <td><a href="https://openaccess.thecvf.com/content/CVPR2024/html/Mao_Denoising_Point_Clouds_in_Latent_Space_via_Graph_Convolution_and_CVPR_2024_paper.html">paper</a><br><a href="https://github.com/yanbiao1/PD-LTS">code</a></td>
+        <td><span class="mix">Smoke rerun submitted.</span> Official repo includes light and heavy pretrained checkpoints. First setup attempt <code>24097325</code> failed while compiling the custom Pila CUDA extension with conda CUDA headers; rerun <code>24097381</code> loads the Snellius CUDA module and runs the light FBM checkpoint on frame 0000 with XYZ-only input and RGB transferred back by nearest neighbor <code>k=1</code>.</td>
       </tr>
       <tr>
         <td><strong>PUDM</strong></td>
@@ -95,18 +95,19 @@
     </tbody>
   </table>
 
-  <h2>Strong Candidates To Read For Final 20</h2>
+  <h2>Included In Survey / Final 20</h2>
   <table>
     <thead>
-      <tr><th style="width: 16%;">Method</th><th style="width: 10%;">Task</th><th style="width: 13%;">Publication</th><th style="width: 24%;">Links</th><th>Why It Is A Candidate</th></tr>
+      <tr><th style="width: 16%;">Method</th><th style="width: 10%;">Task</th><th style="width: 13%;">Publication</th><th style="width: 24%;">Links</th><th>Inclusion Evidence</th></tr>
     </thead>
     <tbody>
-      <tr><td><strong>PUCRN</strong></td><td>Upsampling</td><td>ACCV 2022</td><td><a href="https://arxiv.org/abs/2210.03942">paper</a><br><a href="https://github.com/hikvision-research/3DVision/tree/main/PointUpsampling/PUCRN">code</a></td><td><span class="good">Selected-10 positive</span> on geometry and texture/perceptual. You already read and marked suitable.</td></tr>
-      <tr><td><strong>RepKPU</strong></td><td>Upsampling</td><td>CVPR 2024</td><td><a href="https://openaccess.thecvf.com/content/CVPR2024/papers/Rong_RepKPU_Point_Cloud_Upsampling_with_Kernel_Point_Representation_and_Deformation_CVPR_2024_paper.pdf">paper</a><br><a href="https://github.com/EasyRy/RepKPU">code</a></td><td><span class="good">Selected-10 geometry positive.</span> Texture/perceptual has been computed in the upsampling-candidates batch; read for inclusion.</td></tr>
-      <tr><td><strong>SPU-PMD</strong></td><td>Self-supervised upsampling</td><td>CVPR 2024</td><td><a href="https://github.com/lyz21/SPU-PMD">paper/code</a></td><td><span class="good">Selected-10 geometry positive</span> and texture/perceptual mostly positive. Good recent method for final set.</td></tr>
-      <tr><td><strong>PUFM</strong></td><td>Flow-matching upsampling</td><td>2025 / AAAI 2026 listing</td><td><a href="https://arxiv.org/abs/2501.15286">paper</a><br><a href="https://github.com/Holmes-Alan/PUFM">code</a></td><td><span class="mix">You read and marked suitable.</span> Geometry is mixed/positive. Read if you want the flow-matching family represented.</td></tr>
-      <tr><td><strong>PU-Flow</strong></td><td>Normalizing-flow upsampling</td><td>IEEE TVCG 2022</td><td><a href="https://arxiv.org/abs/2107.05893">paper</a><br><a href="https://github.com/unknownue/puflow">code</a></td><td><span class="good">Selected-10 geometry mostly positive</span>; perceptual projection metrics improve but YUV/PCQM drop. Read for flow-based upsampling taxonomy.</td></tr>
-      <tr><td><strong>CRCIR upsampling mode</strong></td><td>Compression-derived upsampling</td><td>ECCV 2024</td><td><a href="https://arxiv.org/pdf/2408.02966">paper</a><br><a href="https://github.com/hxu160/CRCIR_for_PCGC">code</a></td><td><span class="good">Selected-10 geometry positive.</span> Keep separate from pure upsampling because it is compression/refinement-derived.</td></tr>
+      <tr><td><strong>PC2-PU</strong></td><td>Upsampling</td><td>ACM MM 2022</td><td><a href="https://arxiv.org/abs/2109.09337">paper</a><br><a href="https://github.com/chenlongwhu/PC2-PU">code</a></td><td><span class="good">Included.</span> Texture/perceptual is positive and geometry is weak-mixed: improves CD_Acc, Chamfer-L1, F10, F20, YUV-PSNR, projection SSIM, LPIPS, and PCQM, while CD_Comp and Chamfer-L2 worsen.</td></tr>
+      <tr><td><strong>PUCRN</strong></td><td>Upsampling</td><td>ACCV 2022</td><td><a href="https://arxiv.org/abs/2210.03942">paper</a><br><a href="https://github.com/hikvision-research/3DVision/tree/main/PointUpsampling/PUCRN">code</a></td><td><span class="good">Included.</span> Selected-10 positive on geometry and texture/perceptual. You already read and marked suitable.</td></tr>
+      <tr><td><strong>RepKPU</strong></td><td>Upsampling</td><td>CVPR 2024</td><td><a href="https://openaccess.thecvf.com/content/CVPR2024/papers/Rong_RepKPU_Point_Cloud_Upsampling_with_Kernel_Point_Representation_and_Deformation_CVPR_2024_paper.pdf">paper</a><br><a href="https://github.com/EasyRy/RepKPU">code</a></td><td><span class="good">Included.</span> Selected-10 geometry positive; texture/perceptual computed in the upsampling-candidates batch.</td></tr>
+      <tr><td><strong>SPU-PMD</strong></td><td>Self-supervised upsampling</td><td>CVPR 2024</td><td><a href="https://github.com/lyz21/SPU-PMD">paper/code</a></td><td><span class="good">Included.</span> Selected-10 geometry positive and texture/perceptual mostly positive.</td></tr>
+      <tr><td><strong>PUFM</strong></td><td>Flow-matching upsampling</td><td>2025 / AAAI 2026 listing</td><td><a href="https://arxiv.org/abs/2501.15286">paper</a><br><a href="https://github.com/Holmes-Alan/PUFM">code</a></td><td><span class="good">Included.</span> You read and marked suitable. Geometry is mixed/positive and represents the flow-matching family.</td></tr>
+      <tr><td><strong>PU-Flow</strong></td><td>Normalizing-flow upsampling</td><td>IEEE TVCG 2022</td><td><a href="https://arxiv.org/abs/2107.05893">paper</a><br><a href="https://github.com/unknownue/puflow">code</a></td><td><span class="good">Included.</span> Selected-10 geometry mostly positive; projection perceptual metrics improve, while YUV/PCQM drop.</td></tr>
+      <tr><td><strong>CRCIR upsampling mode</strong></td><td>Compression-derived upsampling</td><td>ECCV 2024</td><td><a href="https://arxiv.org/pdf/2408.02966">paper</a><br><a href="https://github.com/hxu160/CRCIR_for_PCGC">code</a></td><td><span class="good">Included.</span> Selected-10 geometry positive. Keep separate from pure upsampling because it is compression/refinement-derived.</td></tr>
     </tbody>
   </table>
 
@@ -131,7 +132,6 @@
       <tr><td><strong>Meta-PU</strong></td><td>Upsampling</td><td>IEEE TVCG 2021</td><td><a href="https://github.com/pleaseconnectwifi/Meta-PU">code</a></td><td>Waiting for compatible pretrained checkpoint.</td></tr>
       <tr><td><strong>PU-Dense</strong></td><td>Upsampling</td><td>IEEE TIP 2022</td><td><a href="https://github.com/aniqueakhtar/PointCloudUpsampling">code</a></td><td>Official checkpoint link returned 404; old MinkowskiEngine stack would be needed if checkpoint appears.</td></tr>
       <tr><td><strong>APU-LDI</strong></td><td>Arbitrary upsampling</td><td>AAAI 2024</td><td><a href="https://arxiv.org/abs/2312.15133">paper</a><br><a href="https://github.com/lisj575/APU-LDI">code</a></td><td>Potentially relevant, but checkpoint package is mixed with large datasets/per-shape optimization. Need isolate local LDI checkpoint first.</td></tr>
-      <tr><td><strong>TULIP</strong></td><td>LiDAR range-image upsampling</td><td>CVPR 2024</td><td><a href="https://arxiv.org/abs/2312.06733">paper</a><br><a href="https://github.com/ethz-asl/TULIP">code</a></td><td>Domain-transfer only; expects LiDAR range-image structure, not dense RGB point clouds.</td></tr>
     </tbody>
   </table>
 </main>
