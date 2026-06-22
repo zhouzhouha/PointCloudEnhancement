@@ -3,381 +3,137 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Point Cloud Enhancement Paper Reading List</title>
+  <title>Final Point Cloud Enhancement Papers To Check</title>
   <style>
-    :root {
-      color-scheme: light;
-      --bg: #f7f8fa;
-      --ink: #1f2933;
-      --muted: #5c6f82;
-      --line: #d8dee6;
-      --panel: #ffffff;
-      --danger: #b42318;
-      --warn: #9a6700;
-      --ok: #17623a;
-      --link: #1455a0;
-    }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.45;
-    }
-    main {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 28px 20px 56px;
-    }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
-      line-height: 1.2;
-    }
-    h2 {
-      margin: 28px 0 12px;
-      font-size: 20px;
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 8px;
-    }
-    p {
-      margin: 8px 0;
-      color: var(--muted);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      margin: 12px 0 24px;
-      table-layout: fixed;
-    }
-    th, td {
-      border-bottom: 1px solid var(--line);
-      padding: 10px 12px;
-      vertical-align: top;
-      text-align: left;
-      font-size: 14px;
-    }
-    th {
-      background: #edf1f5;
-      color: #24313f;
-      font-weight: 700;
-    }
-    tr:last-child td {
-      border-bottom: 0;
-    }
-    a {
-      color: var(--link);
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .tag {
-      display: inline-block;
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      padding: 2px 6px;
-      margin: 0 4px 4px 0;
-      font-size: 12px;
-      color: #2f3f50;
-      background: #f4f6f8;
-    }
-    .negative { color: var(--danger); font-weight: 700; }
-    .mixed { color: var(--warn); font-weight: 700; }
-    .candidate { color: var(--ok); font-weight: 700; }
-    .note {
-      background: #fff8e5;
-      border: 1px solid #ecd28b;
-      padding: 12px 14px;
-      margin: 16px 0;
-      color: #4c3b00;
-    }
-    code {
-      font-family: Consolas, Monaco, monospace;
-      font-size: 13px;
-      background: #eef2f6;
-      padding: 1px 4px;
-      border-radius: 3px;
-    }
+    body { margin: 0; background: #f6f7f9; color: #1f2933; font-family: Arial, Helvetica, sans-serif; line-height: 1.45; }
+    main { max-width: 1220px; margin: 0 auto; padding: 28px 20px 60px; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    h2 { margin: 30px 0 12px; padding-bottom: 8px; border-bottom: 1px solid #d8dee6; font-size: 20px; }
+    p { color: #52616f; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d8dee6; table-layout: fixed; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #d8dee6; text-align: left; vertical-align: top; font-size: 14px; }
+    th { background: #e9edf2; color: #263544; }
+    a { color: #1455a0; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { background: #edf1f5; padding: 1px 4px; border-radius: 3px; }
+    .note { background: #fff8e5; border: 1px solid #e2ca83; padding: 12px 14px; margin: 14px 0 20px; color: #4c3b00; }
+    .bad { color: #b42318; font-weight: 700; }
+    .mix { color: #9a6700; font-weight: 700; }
+    .good { color: #17623a; font-weight: 700; }
+    .skip { color: #5d6570; font-weight: 700; }
+    .tag { display: inline-block; margin: 0 4px 4px 0; padding: 2px 6px; border: 1px solid #d8dee6; border-radius: 4px; background: #f3f5f7; font-size: 12px; }
   </style>
 </head>
 <body>
 <main>
-  <h1>Point Cloud Enhancement Paper Reading List</h1>
-  <p>Generated for the UVG-CWI-DQPC <code>OrangeKettlebell</code> benchmark. Focus first on methods that gave negative or mixed results, because these need a paper-based decision before inclusion, exclusion, or rerun.</p>
-  <div class="note">
-    Current rule: benchmark scope is point-cloud-only enhancement, degraded point cloud in and enhanced point cloud out. Multimodal, partial-completion-only, and legacy TensorFlow methods should be marked separately unless you decide they are needed for survey coverage.
-  </div>
+  <h1>Final Point Cloud Enhancement Papers To Check</h1>
+  <p>Updated 2026-06-22 for the UVG-CWI-DQPC <code>OrangeKettlebell</code> selected-10 benchmark. This is the canonical merged reading list; the older dated duplicate has been removed. Scope: point-cloud-only enhancement, degraded point cloud in and enhanced point cloud out.</p>
+  <div class="note">Read priority is based on what you have already finished reading, what you explicitly excluded, and which remaining methods still need a paper-level inclusion decision because the benchmark result is mixed, negative, or blocked.</div>
 
-  <h2>Priority 1: Negative Or Mixed Results To Decide</h2>
+  <h2>Read Next: Decision Needed</h2>
   <table>
     <thead>
-      <tr>
-        <th style="width: 18%;">Method</th>
-        <th style="width: 10%;">Year</th>
-        <th style="width: 22%;">Paper / Code</th>
-        <th style="width: 16%;">Benchmark Status</th>
-        <th>Why Read</th>
-      </tr>
+      <tr><th style="width: 16%;">Method</th><th style="width: 10%;">Task</th><th style="width: 13%;">Publication</th><th style="width: 24%;">Links</th><th>Benchmark Evidence / Why You Should Read</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Pointfilter</strong><br><span class="tag">denoising/filtering</span></td>
-        <td>2020<br>IEEE TVCG</td>
-        <td><a href="https://github.com/dongbo-BUAA-VR/Pointfilter">repo</a></td>
-        <td><span class="negative">selected-10 negative</span></td>
-        <td>Accuracy improved, but completeness, Chamfer, recall, F10/F20, projection SSIM, LPIPS, and PCQM dropped. Read to decide whether this is expected from its filtering objective or a mismatch with dense human captures.</td>
+        <td><strong>P2P-Bridge</strong><br><span class="tag">new</span></td>
+        <td>Denoising</td>
+        <td>ECCV 2024</td>
+        <td><a href="https://arxiv.org/abs/2408.16325">paper</a><br><a href="https://github.com/matvogel/P2P-Bridge">code</a></td>
+        <td><span class="mix">Smoke mixed/positive.</span> Frame 0000 improves CD_Acc, Chamfer-L1/L2, precision, and F20, but worsens completeness, recall, and F10. Selected-10 is now running as job <code>24093763</code>. Read to decide if diffusion-bridge denoising belongs in the survey even if dense-frame recall drops.</td>
       </tr>
       <tr>
-        <td><strong>Deep-RS</strong><br><span class="tag">denoising</span><span class="tag">resampling</span></td>
-        <td>2022<br>IEEE TPAMI</td>
-        <td><a href="https://github.com/ChenhLiwnl/deep-rs">repo</a></td>
-        <td><span class="negative">smoke negative</span></td>
-        <td>Frame 0000 had only tiny accuracy gain but worse completeness, Chamfer, recall, and all F-scores. Read before deciding whether it should remain a smoke-only negative case.</td>
+        <td><strong>PC2-PU</strong></td>
+        <td>Upsampling</td>
+        <td>ACM MM 2022</td>
+        <td><a href="https://arxiv.org/abs/2109.09337">paper</a><br><a href="https://github.com/chenlongwhu/PC2-PU">code</a></td>
+        <td><span class="good">Texture/perceptual positive, geometry weak-mixed.</span> Selected-10 improves CD_Acc, Chamfer-L1, F10, F20, YUV-PSNR, projection SSIM, LPIPS, and PCQM, but worsens CD_Comp and Chamfer-L2. Read before deciding if it is in the final 20.</td>
       </tr>
       <tr>
-        <td><strong>Score-Denoise</strong><br><span class="tag">denoising</span></td>
-        <td>2021<br>ICCV</td>
-        <td><a href="https://github.com/luost26/score-denoise">repo</a></td>
-        <td><span class="mixed">selected-10 mixed/candidate</span></td>
-        <td>Geometry improves accuracy/F-scores but worsens completeness. Read to explain why score-based denoising can clean points while losing coverage.</td>
+        <td><strong>PUDM</strong></td>
+        <td>Diffusion upsampling</td>
+        <td>CVPR 2024</td>
+        <td><a href="https://github.com/QWTforGithub/PUDM">paper/code</a></td>
+        <td><span class="mix">You marked it suitable, but selected-10 geometry is mostly negative.</span> Texture/perceptual is mixed-positive. Read again for dense-scene mismatch and whether to include as a diffusion upsampling comparison.</td>
       </tr>
       <tr>
-        <td><strong>MAG</strong><br><span class="tag">denoising</span></td>
-        <td>2023<br>ICIP</td>
-        <td><a href="https://github.com/IndigoPurple/MAG">repo</a> / <a href="https://ieeexplore.ieee.org/abstract/document/10222122">paper</a></td>
-        <td><span class="mixed">selected-10 mixed/candidate</span></td>
-        <td>Similar pattern to Score-Denoise: better accuracy and F-scores, slightly worse completeness and texture/perceptual metrics. Read for survey positioning against score-gradient methods.</td>
+        <td><strong>Pointfilter</strong></td>
+        <td>Denoising/filtering</td>
+        <td>IEEE TVCG 2020</td>
+        <td><a href="https://github.com/dongbo-BUAA-VR/Pointfilter">code</a></td>
+        <td><span class="bad">Selected-10 negative overall.</span> Accuracy improves, but completeness, Chamfer, recall, F-scores, projection SSIM, LPIPS, and PCQM drop. Read only if you want to keep a filtering baseline.</td>
       </tr>
       <tr>
-        <td><strong>PD-Flow</strong><br><span class="tag">denoising</span><span class="tag">normalizing flow</span></td>
-        <td>2022<br>ECCV</td>
-        <td><a href="https://arxiv.org/abs/2203.05940">paper</a> / <a href="https://github.com/unknownue/pdflow">repo</a></td>
-        <td><span class="mixed">smoke mixed/negative</span></td>
-        <td>You already read this paper. Keep it on the decision list because theory is relevant, but UVG smoke metrics are not strong. Full170 ablation was requested separately.</td>
+        <td><strong>Deep-RS</strong></td>
+        <td>Denoising/resampling</td>
+        <td>IEEE TPAMI 2022</td>
+        <td><a href="https://github.com/ChenhLiwnl/deep-rs">code</a></td>
+        <td><span class="bad">Smoke negative.</span> Tiny accuracy gain but worse completeness, Chamfer, recall, and all F-scores. Read before deciding whether it is a failure case or excluded.</td>
       </tr>
       <tr>
-        <td><strong>IterativePFN</strong><br><span class="tag">filtering</span></td>
-        <td>2023<br>CVPR</td>
-        <td><a href="https://github.com/ddsediri/IterativePFN">repo</a></td>
-        <td><span class="negative">smoke negative</span></td>
-        <td>You already read this paper. It worsened all reported frame-0000 geometry metrics, so decide whether to cite as a relevant filtering method but exclude from selected-10 expansion.</td>
+        <td><strong>SAPCU</strong></td>
+        <td>Arbitrary upsampling</td>
+        <td>CVPR 2022</td>
+        <td><a href="https://github.com/xnowbzhao/sapcu">code</a></td>
+        <td><span class="bad">Smoke negative under fixed 2048 input.</span> Official dense helper limits input size, which is a major mismatch with our dense captures. Read to decide whether this limitation should be discussed in the survey.</td>
       </tr>
       <tr>
-        <td><strong>PUDM</strong><br><span class="tag">upsampling</span><span class="tag">diffusion</span></td>
-        <td>2024<br>CVPR</td>
-        <td><a href="https://github.com/QWTforGithub/PUDM">repo</a></td>
-        <td><span class="mixed">selected-10 mostly negative geometry</span></td>
-        <td>You already read this paper and marked it suitable. Geometry worsened on completeness, Chamfer-L1/L2, F10, and F20, while texture/perceptual was more positive. Decide how to explain diffusion upsampling mismatch on dense UVG scenes.</td>
+        <td><strong>Neural Points</strong></td>
+        <td>Arbitrary upsampling</td>
+        <td>CVPR 2022</td>
+        <td><a href="https://arxiv.org/abs/2112.04148">paper</a><br><a href="https://github.com/WanquanF/NeuralPoints">code</a></td>
+        <td><span class="mix">You read and marked relevant.</span> Selected-10 improves completeness/F-scores but worsens accuracy and Chamfer-L2; texture/perceptual is mostly negative except PCQM. Keep as fixed-size patch/domain-transfer unless you decide otherwise.</td>
       </tr>
       <tr>
-        <td><strong>Neural Points</strong><br><span class="tag">arbitrary upsampling</span></td>
-        <td>2022<br>CVPR</td>
-        <td><a href="https://arxiv.org/abs/2112.04148">paper</a> / <a href="https://github.com/WanquanF/NeuralPoints">repo</a></td>
-        <td><span class="mixed">selected-10 mixed/positive</span></td>
-        <td>You already read this paper and marked it relevant. It improves completeness/F10/F20 but worsens accuracy and Chamfer-L2. Keep clearly labeled as a fixed-size 2048-input patch/object-domain adaptation.</td>
-      </tr>
-      <tr>
-        <td><strong>SPSR</strong><br><span class="tag">traditional reconstruction</span></td>
-        <td>2013</td>
-        <td><a href="https://hhoppe.com/proj/screenedpoisson/">project</a></td>
-        <td><span class="mixed">selected-10 mixed</span></td>
-        <td>Clean face but separated blobs near human edges. Read only if you want a traditional reconstruction explanation for edge artifacts and surface closure assumptions.</td>
+        <td><strong>PD-Flow</strong></td>
+        <td>Normalizing-flow denoising</td>
+        <td>ECCV 2022</td>
+        <td><a href="https://arxiv.org/abs/2203.05940">paper</a><br><a href="https://github.com/unknownue/pdflow">code</a></td>
+        <td><span class="mix">You read it and want theoretical inclusion.</span> Smoke is mixed/negative; full170 ablation failed at frame 0014 inside dense-frame KNN. Include as theory-relevant only if you accept weak performance.</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Priority 2: Positive Candidates Worth Reading For Inclusion</h2>
+  <h2>Strong Candidates To Read For Final 20</h2>
   <table>
     <thead>
-      <tr>
-        <th style="width: 18%;">Method</th>
-        <th style="width: 10%;">Year</th>
-        <th style="width: 22%;">Paper / Code</th>
-        <th style="width: 16%;">Benchmark Status</th>
-        <th>Why Read</th>
-      </tr>
+      <tr><th style="width: 16%;">Method</th><th style="width: 10%;">Task</th><th style="width: 13%;">Publication</th><th style="width: 24%;">Links</th><th>Why It Is A Candidate</th></tr>
     </thead>
     <tbody>
-      <tr>
-        <td><strong>PUCRN</strong><br><span class="tag">upsampling</span></td>
-        <td>2022<br>ACCV</td>
-        <td><a href="https://arxiv.org/abs/2210.03942">paper</a> / <a href="https://github.com/hikvision-research/3DVision/tree/main/PointUpsampling/PUCRN">repo</a></td>
-        <td><span class="candidate">selected-10 positive</span></td>
-        <td>You already read and marked it suitable. Strong candidate: positive geometry and texture/perceptual metrics with dense-frame chunking.</td>
-      </tr>
-      <tr>
-        <td><strong>PC2-PU</strong><br><span class="tag">upsampling</span></td>
-        <td>2022<br>ACM MM</td>
-        <td><a href="https://arxiv.org/abs/2109.09337">paper</a> / <a href="https://github.com/chenlongwhu/PC2-PU">repo</a></td>
-        <td><span class="mixed">smoke mixed/positive; selected-10 running</span></td>
-        <td>Read after selected-10 finishes. Smoke improved accuracy, Chamfer-L1, and F-scores, with small completeness/Chamfer-L2 regressions.</td>
-      </tr>
-      <tr>
-        <td><strong>RepKPU</strong><br><span class="tag">upsampling</span></td>
-        <td>2024<br>CVPR</td>
-        <td><a href="https://openaccess.thecvf.com/content/CVPR2024/papers/Rong_RepKPU_Point_Cloud_Upsampling_with_Kernel_Point_Representation_and_Deformation_CVPR_2024_paper.pdf">paper</a> / <a href="https://github.com/EasyRy/RepKPU">repo</a></td>
-        <td><span class="candidate">selected-10 positive</span></td>
-        <td>Good recent upsampling candidate with positive geometry and mostly positive projection/perceptual metrics.</td>
-      </tr>
-      <tr>
-        <td><strong>SnowflakeNet-PU</strong><br><span class="tag">upsampling</span></td>
-        <td>2021 / 2023<br>ICCV / TPAMI</td>
-        <td><a href="https://github.com/AllenXiangX/SnowflakeNet">repo</a></td>
-        <td><span class="candidate">selected-10 positive</span></td>
-        <td>Point-cloud upsampling branch is positive. Read to separate it from SnowflakeNet completion-domain-transfer results.</td>
-      </tr>
-      <tr>
-        <td><strong>PU-Gaussian</strong><br><span class="tag">upsampling</span><span class="tag">3D Gaussian</span></td>
-        <td>2025<br>ICCV workshop</td>
-        <td><a href="https://github.com/mvg-inatech/PU-Gaussian">repo</a></td>
-        <td><span class="candidate">selected-10 positive</span></td>
-        <td>Recent 3D-Gaussian-style upsampling method. Good inclusion candidate if subjective output is acceptable.</td>
-      </tr>
-      <tr>
-        <td><strong>SPU-PMD</strong><br><span class="tag">self-supervised upsampling</span></td>
-        <td>2024<br>CVPR</td>
-        <td><a href="https://github.com/lyz21/SPU-PMD">repo</a></td>
-        <td><span class="candidate">selected-10 positive</span></td>
-        <td>Positive geometry and mostly positive texture/perceptual results. Useful as a self-supervised upsampling candidate.</td>
-      </tr>
-      <tr>
-        <td><strong>PUFM</strong><br><span class="tag">upsampling</span><span class="tag">flow matching</span></td>
-        <td>2025<br>arXiv / AAAI 2026 listing</td>
-        <td><a href="https://arxiv.org/abs/2501.15286">paper</a> / <a href="https://github.com/Holmes-Alan/PUFM">repo</a></td>
-        <td><span class="mixed">selected-10 mixed/positive</span></td>
-        <td>You already read and marked it suitable. Keep as a recent flow-matching upsampling method; explain accuracy/completeness tradeoff.</td>
-      </tr>
-      <tr>
-        <td><strong>CRCIR after-compression upsampling</strong><br><span class="tag">compression-derived enhancement</span></td>
-        <td>2024<br>ECCV</td>
-        <td><a href="https://arxiv.org/pdf/2408.02966">paper</a> / <a href="https://github.com/hxu160/CRCIR_for_PCGC">repo</a></td>
-        <td><span class="candidate">selected-10 positive geometry</span></td>
-        <td>Not a pure upsampling network, but the repo documents upsampling during/after decompression. Read if you want a compression-derived enhancement category.</td>
-      </tr>
-      <tr>
-        <td><strong>GQE-Net</strong><br><span class="tag">color enhancement</span></td>
-        <td>2023<br>IEEE TIP</td>
-        <td><a href="https://doi.org/10.1109/TIP.2023.3330753">paper</a> / <a href="https://github.com/xjr998/GQE-Net">repo</a></td>
-        <td><span class="candidate">selected-10 texture positive</span></td>
-        <td>Important for the colored point cloud branch. Geometry is fixed, but texture/perceptual metrics clearly improve.</td>
-      </tr>
+      <tr><td><strong>PUCRN</strong></td><td>Upsampling</td><td>ACCV 2022</td><td><a href="https://arxiv.org/abs/2210.03942">paper</a><br><a href="https://github.com/hikvision-research/3DVision/tree/main/PointUpsampling/PUCRN">code</a></td><td><span class="good">Selected-10 positive</span> on geometry and texture/perceptual. You already read and marked suitable.</td></tr>
+      <tr><td><strong>RepKPU</strong></td><td>Upsampling</td><td>CVPR 2024</td><td><a href="https://openaccess.thecvf.com/content/CVPR2024/papers/Rong_RepKPU_Point_Cloud_Upsampling_with_Kernel_Point_Representation_and_Deformation_CVPR_2024_paper.pdf">paper</a><br><a href="https://github.com/EasyRy/RepKPU">code</a></td><td><span class="good">Selected-10 geometry positive.</span> Texture/perceptual has been computed in the upsampling-candidates batch; read for inclusion.</td></tr>
+      <tr><td><strong>SPU-PMD</strong></td><td>Self-supervised upsampling</td><td>CVPR 2024</td><td><a href="https://github.com/lyz21/SPU-PMD">paper/code</a></td><td><span class="good">Selected-10 geometry positive</span> and texture/perceptual mostly positive. Good recent method for final set.</td></tr>
+      <tr><td><strong>PUFM</strong></td><td>Flow-matching upsampling</td><td>2025 / AAAI 2026 listing</td><td><a href="https://arxiv.org/abs/2501.15286">paper</a><br><a href="https://github.com/Holmes-Alan/PUFM">code</a></td><td><span class="mix">You read and marked suitable.</span> Geometry is mixed/positive. Read if you want the flow-matching family represented.</td></tr>
+      <tr><td><strong>PU-Flow</strong></td><td>Normalizing-flow upsampling</td><td>IEEE TVCG 2022</td><td><a href="https://arxiv.org/abs/2107.05893">paper</a><br><a href="https://github.com/unknownue/puflow">code</a></td><td><span class="good">Selected-10 geometry mostly positive</span>; perceptual projection metrics improve but YUV/PCQM drop. Read for flow-based upsampling taxonomy.</td></tr>
+      <tr><td><strong>CRCIR upsampling mode</strong></td><td>Compression-derived upsampling</td><td>ECCV 2024</td><td><a href="https://arxiv.org/pdf/2408.02966">paper</a><br><a href="https://github.com/hxu160/CRCIR_for_PCGC">code</a></td><td><span class="good">Selected-10 geometry positive.</span> Keep separate from pure upsampling because it is compression/refinement-derived.</td></tr>
     </tbody>
   </table>
 
-  <h2>Priority 3: Survey Coverage / Blocked Or Skipped Methods</h2>
+  <h2>Already Read And Excluded</h2>
   <table>
     <thead>
-      <tr>
-        <th style="width: 18%;">Method</th>
-        <th style="width: 10%;">Year</th>
-        <th style="width: 22%;">Paper / Code</th>
-        <th style="width: 16%;">Status</th>
-        <th>Decision Needed</th>
-      </tr>
+      <tr><th style="width: 16%;">Method</th><th style="width: 10%;">Task</th><th style="width: 13%;">Publication</th><th style="width: 24%;">Links</th><th>Decision</th></tr>
     </thead>
     <tbody>
-      <tr>
-        <td><strong>RePCD-Net</strong><br><span class="tag">denoising</span></td>
-        <td>2022<br>IJCV</td>
-        <td><a href="https://github.com/chenhonghua/RePCD-Net">repo</a> / <a href="https://link.springer.com/article/10.1007/s11263-021-01564-7">paper</a></td>
-        <td><span class="mixed">blocked</span></td>
-        <td>Survey-listed but TensorFlow/custom-op and no visible pretrained checkpoint. Decide whether to include in literature only.</td>
-      </tr>
-      <tr>
-        <td><strong>Meta-PU</strong><br><span class="tag">arbitrary upsampling</span></td>
-        <td>2021<br>IEEE TVCG</td>
-        <td><a href="https://github.com/pleaseconnectwifi/Meta-PU">repo</a></td>
-        <td><span class="mixed">waiting for checkpoint</span></td>
-        <td>Relevant upsampling method, but no local pretrained checkpoint. Read if deciding whether to search/download more aggressively.</td>
-      </tr>
-      <tr>
-        <td><strong>PU-Transformer</strong><br><span class="tag">upsampling transformer</span></td>
-        <td>2022<br>ACCV</td>
-        <td><a href="https://arxiv.org/abs/2111.12242">paper</a> / <a href="https://github.com/ShiQiu0419/PU-Transformer">official repo</a></td>
-        <td><span class="mixed">blocked</span></td>
-        <td>Conceptually important transformer upsampling baseline, but no usable pretrained checkpoint in inspected code.</td>
-      </tr>
-      <tr>
-        <td><strong>SPU-Net</strong><br><span class="tag">self-supervised upsampling</span></td>
-        <td>2022<br>IEEE TIP</td>
-        <td><a href="https://github.com/liuxinhai/SPU-Net">repo</a></td>
-        <td><span class="mixed">skipped TF</span></td>
-        <td>Read for literature coverage only unless you approve a TensorFlow exception or find PyTorch weights.</td>
-      </tr>
-      <tr>
-        <td><strong>PU-EVA</strong><br><span class="tag">flexible-scale upsampling</span></td>
-        <td>2021<br>ICCV</td>
-        <td><a href="https://github.com/GabrielleTse/PU-EVA">repo</a></td>
-        <td><span class="mixed">skipped TF</span></td>
-        <td>Relevant flexible-scale method, but official implementation is TensorFlow/custom-op.</td>
-      </tr>
-      <tr>
-        <td><strong>PUFA-GAN</strong><br><span class="tag">upsampling</span><span class="tag">GAN</span></td>
-        <td>2022<br>IEEE TIP</td>
-        <td><a href="https://github.com/yuanhui0325/PUFA-GAN">repo</a></td>
-        <td><span class="mixed">skipped TF</span></td>
-        <td>Has local TensorFlow checkpoint shards, but TF1/custom PointNet++ ops make it expensive. Literature-only unless TF exception is approved.</td>
-      </tr>
-      <tr>
-        <td><strong>SPU-IMR</strong><br><span class="tag">self-supervised upsampling</span></td>
-        <td>2025<br>AAAI</td>
-        <td><a href="https://arxiv.org/abs/2502.19452">paper</a> / <a href="https://github.com/hapifuzi/spu-imr">repo</a></td>
-        <td><span class="mixed">checkpoint unavailable</span></td>
-        <td>Recent and relevant, but official checkpoint link was unavailable. Read if you want to decide whether to contact authors.</td>
-      </tr>
-      <tr>
-        <td><strong>APU-LDI</strong><br><span class="tag">arbitrary-scale upsampling</span></td>
-        <td>2024<br>AAAI</td>
-        <td><a href="https://arxiv.org/abs/2312.15133">paper</a> / <a href="https://github.com/lisj575/APU-LDI">repo</a></td>
-        <td><span class="mixed">held</span></td>
-        <td>Potentially relevant, but full method optimizes a global field per input shape. Read to decide whether this is a fair feed-forward benchmark method.</td>
-      </tr>
-      <tr>
-        <td><strong>PU-Dense</strong><br><span class="tag">sparse tensor upsampling</span></td>
-        <td>2022<br>IEEE TIP</td>
-        <td><a href="https://github.com/aniqueakhtar/PointCloudUpsampling">repo</a></td>
-        <td><span class="mixed">checkpoint link 404</span></td>
-        <td>Read only if sparse-convolution upsampling is important enough to ask authors for weights.</td>
-      </tr>
+      <tr><td><strong>SuperPC</strong></td><td>Multimodal restoration</td><td>CVPR 2025</td><td><a href="https://arxiv.org/abs/2503.14558">paper</a><br><a href="https://github.com/sair-lab/SuperPC">code</a></td><td><span class="skip">Excluded.</span> It uses image-point-cloud conditioning, so it is outside point-cloud-only benchmarking.</td></tr>
+      <tr><td><strong>FBNet</strong></td><td>Completion</td><td>ECCV 2022</td><td><a href="https://arxiv.org/abs/2210.03974">paper</a><br><a href="https://github.com/hikvision-research/3DVision/tree/main/PointCompletion/FBNet">code</a></td><td><span class="skip">Excluded.</span> It is partial point cloud completion rather than degraded dense point cloud enhancement.</td></tr>
     </tbody>
   </table>
 
-  <h2>Excluded / Scope Boundary Papers Already Read</h2>
+  <h2>Blocked Or Lower Priority</h2>
   <table>
     <thead>
-      <tr>
-        <th style="width: 18%;">Method</th>
-        <th style="width: 10%;">Year</th>
-        <th style="width: 22%;">Paper / Code</th>
-        <th>Recorded Decision</th>
-      </tr>
+      <tr><th style="width: 16%;">Method</th><th style="width: 10%;">Task</th><th style="width: 13%;">Publication</th><th style="width: 24%;">Links</th><th>Reason</th></tr>
     </thead>
     <tbody>
-      <tr>
-        <td><strong>SuperPC</strong></td>
-        <td>2025<br>CVPR</td>
-        <td><a href="https://arxiv.org/abs/2503.14558">paper</a> / <a href="https://github.com/sair-lab/SuperPC">repo</a></td>
-        <td>Already read and excluded from main benchmark because it is multimodal image-and-point-cloud conditioned restoration, not point-cloud-only enhancement.</td>
-      </tr>
-      <tr>
-        <td><strong>FBNet</strong></td>
-        <td>2022<br>ECCV</td>
-        <td><a href="https://arxiv.org/abs/2210.03974">paper</a> / <a href="https://github.com/hikvision-research/3DVision/tree/main/PointCompletion/FBNet">repo</a></td>
-        <td>Already read and excluded because it is partial point cloud completion, while the current benchmark targets degraded dense point cloud enhancement.</td>
-      </tr>
+      <tr><td><strong>RePCD-Net</strong></td><td>Denoising</td><td>IJCV 2022</td><td><a href="https://github.com/chenhonghua/RePCD-Net">code</a></td><td>No usable PyTorch/pretrained path under current TF-skip rule.</td></tr>
+      <tr><td><strong>Meta-PU</strong></td><td>Upsampling</td><td>IEEE TVCG 2021</td><td><a href="https://github.com/pleaseconnectwifi/Meta-PU">code</a></td><td>Waiting for compatible pretrained checkpoint.</td></tr>
+      <tr><td><strong>PU-Dense</strong></td><td>Upsampling</td><td>IEEE TIP 2022</td><td><a href="https://github.com/aniqueakhtar/PointCloudUpsampling">code</a></td><td>Official checkpoint link returned 404; old MinkowskiEngine stack would be needed if checkpoint appears.</td></tr>
+      <tr><td><strong>APU-LDI</strong></td><td>Arbitrary upsampling</td><td>AAAI 2024</td><td><a href="https://arxiv.org/abs/2312.15133">paper</a><br><a href="https://github.com/lisj575/APU-LDI">code</a></td><td>Potentially relevant, but checkpoint package is mixed with large datasets/per-shape optimization. Need isolate local LDI checkpoint first.</td></tr>
+      <tr><td><strong>TULIP</strong></td><td>LiDAR range-image upsampling</td><td>CVPR 2024</td><td><a href="https://arxiv.org/abs/2312.06733">paper</a><br><a href="https://github.com/ethz-asl/TULIP">code</a></td><td>Domain-transfer only; expects LiDAR range-image structure, not dense RGB point clouds.</td></tr>
     </tbody>
   </table>
-
-  <h2>Morning Checklist</h2>
-  <ol>
-    <li>Read Priority 1 negative/mixed papers first: Pointfilter, Deep-RS, Score-Denoise, MAG, PUDM, Neural Points, IterativePFN.</li>
-    <li>For each, decide: include as benchmark method, include as literature-only, or exclude from survey scope.</li>
-    <li>Then read Priority 2 positive candidates to write the main upsampling/denoising/color-enhancement taxonomy.</li>
-    <li>Use <code>skills/methods/BENCHMARK_METHOD_STATUS.md</code> as the source of truth for run status and exact metric paths.</li>
-  </ol>
 </main>
 </body>
 </html>
