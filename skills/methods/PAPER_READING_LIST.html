@@ -44,6 +44,13 @@
         <td><span class="bad">Light and heavy smoke negative.</span> Official repo includes light and heavy pretrained FBM checkpoints, and both were run on frame 0000 with XYZ-only input plus RGB transferred back by nearest neighbor <code>k=1</code>. Light checkpoint improves only accuracy/precision and worsens completeness, Chamfer, and F-scores. Heavy checkpoint is worse on all listed geometry metrics: <code>chamfer-L1 50.1062 -> 51.3913</code>, <code>chamfer-L2 2098.37 -> 2192.21</code>, <code>F_10 0.2570 -> 0.2464</code>, <code>F_20 0.4866 -> 0.4726</code>. Read only if you want to decide whether a recent CVPR 2024 latent-space denoising method should be discussed despite negative benchmark evidence.</td>
       </tr>
       <tr>
+        <td><strong>PathNet</strong><br><span class="tag">new</span></td>
+        <td>Denoising</td>
+        <td>IEEE TPAMI 2024</td>
+        <td><a href="https://github.com/ZeyongWei/PathNet">paper/code</a><br><a href="https://drive.google.com/drive/folders/1qaxpcqBGVK59HBfTTS68AoaqSWLcp9si?usp=sharing">checkpoint folder</a></td>
+        <td><span class="mix">Smoke mixed; selected-10 running.</span> Frame 0000 slightly worsens CD/Chamfer, but improves recall and F-scores. The UVG run uses a clearly labeled 50K-point Morton-chunked wrapper because the official test path targets about 10K-50K points, while UVG frames are about 0.5M points. Selected-10 job <code>24112993</code> is submitted; read if selected-10 remains mixed-positive or if you want another recent point-cloud-only denoising method in the survey.</td>
+      </tr>
+      <tr>
         <td><strong>Pointfilter</strong></td>
         <td>Denoising/filtering</td>
         <td>IEEE TVCG 2020</td>
