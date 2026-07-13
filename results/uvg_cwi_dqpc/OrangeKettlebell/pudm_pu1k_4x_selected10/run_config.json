@@ -1,0 +1,25 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000",
+    "0010",
+    "0020",
+    "0030",
+    "0040",
+    "0050",
+    "0060",
+    "0070",
+    "0080",
+    "0090"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "pudm_pu1k_4x_selected10",
+  "config": "third_party/enhancement/PUDM/pointnet2/exp_configs/PU1K.json",
+  "checkpoint": "third_party/enhancement/PUDM/pointnet2/pkls/pu1k.pkl",
+  "chunk_size": 2048,
+  "up_rate": 4,
+  "gamma": 0.5,
+  "step": 30,
+  "seed": 42,
+  "device": "cuda"
+}

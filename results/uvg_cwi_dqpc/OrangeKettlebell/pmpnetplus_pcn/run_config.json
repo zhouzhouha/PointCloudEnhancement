@@ -1,0 +1,13 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "pmpnetplus_pcn",
+  "checkpoint": "/gpfs/home2/xzhou/code/PointCloudEnhancement/third_party/enhancement/PMP-Net/pretrained/pcn/ckpt-best-pmpplus.pth",
+  "model_variant": "pmpnetplus",
+  "n_input": 2048,
+  "n_repeats": 8,
+  "seed": 2026
+}

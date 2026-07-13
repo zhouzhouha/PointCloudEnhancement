@@ -1,0 +1,15 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "crcir_aftercomp_4x",
+  "config": "/gpfs/home2/xzhou/code/PointCloudEnhancement/third_party/enhancement/CRCIR_for_PCGC/result/ex0_hyper_5e_3/config.yaml",
+  "checkpoint": "/gpfs/home2/xzhou/code/PointCloudEnhancement/third_party/enhancement/CRCIR_for_PCGC/result/ex0_hyper_5e_3/checkpoint_best.pth",
+  "chunk_size": 2048,
+  "encoder_downsample": 2,
+  "decoder_multiplier": 4,
+  "seed": 123,
+  "device": "cuda"
+}

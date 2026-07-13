@@ -11,7 +11,7 @@ Positive `delta` means the method improved over the CG baseline for that metric.
 | MAG | Denoising | Candidate | 0.4305 | -0.2012 | 0.2293 | 0.0025 | 0.0042 | 0.0071 | -0.0001 | -0.0004 | -0.0006 |
 | Score-Denoise | Denoising | Candidate | 0.4313 | -0.2029 | 0.2284 | 0.0025 | 0.0041 | 0.0076 | -0.0001 | -0.0001 | -0.0006 |
 | P2P-Bridge | Denoising | Candidate | 1.7345 | -0.2662 | 1.4683 | 0.0108 | 0.0181 | 0.4644 | -0.0041 | -0.0067 | -0.0133 |
-| PathNet | Denoising | Mixed / recent denoising candidate | -0.0085 | -0.0504 | -0.0589 | 0.0006 | 0.0012 |  |  |  |  |
+| PathNet | Denoising | Included / weak-mixed | -0.0085 | -0.0504 | -0.0589 | 0.0006 | 0.0012 | 0.0069 | -0.0027 | -0.0096 | 0.0003 |
 | GQE-Net | Color / texture enhancement | Candidate for texture | 0.0000 | -0.0000 | -0.0000 | -0.0000 | 0.0000 | 0.0603 | 0.0010 | 0.0010 | 0.0008 |
 | Octree upsample-clean | Joint upsampling / cleaning | Candidate | 2.2532 | 0.4222 | 2.6754 | 0.0386 | 0.0385 | 0.0830 | -0.0844 | -0.2048 | -0.0093 |
 | PU-Flow | Upsampling | Candidate | 0.3180 | 2.1248 | 2.4428 | 0.0132 | 0.0237 | -0.1000 | 0.2441 | 0.2752 | -0.0142 |

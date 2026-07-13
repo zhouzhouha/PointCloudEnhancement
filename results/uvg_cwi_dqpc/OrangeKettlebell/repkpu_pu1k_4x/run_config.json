@@ -1,0 +1,13 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "repkpu_pu1k_4x",
+  "checkpoint": "third_party/enhancement/RepKPU/pretrain/exp1/ckpt-best.pth",
+  "chunk_size": 8192,
+  "up_rate": 4,
+  "patch_rate": 3,
+  "device": "cuda"
+}

@@ -28,7 +28,7 @@
 <main>
   <h1>Final Point Cloud Enhancement Papers To Check</h1>
   <p>Updated 2026-06-23 for the UVG-CWI-DQPC <code>OrangeKettlebell</code> selected-10 benchmark. This is the canonical merged reading list; the older dated duplicate has been removed. Scope: point-cloud-only enhancement, degraded point cloud in and enhanced point cloud out.</p>
-  <div class="note">Current decision: the table below is the working <strong>Final 20</strong> list for point-cloud-only enhancement benchmarking. It combines denoising, color/texture enhancement, upsampling, joint upsampling/cleaning, and compression-derived enhancement methods with selected-10 evidence. SuperPC and FBNet remain excluded by scope; TULIP has been removed because it is LiDAR range-image upsampling, not direct point-cloud enhancement for dense RGB point clouds.</div>
+  <div class="note">Current decision: the table below is the working included list for point-cloud-only enhancement benchmarking. It combines denoising, color/texture enhancement, upsampling, joint upsampling/cleaning, and compression-derived enhancement methods with selected-10 or smoke evidence. <strong>PD-LTS</strong>, <strong>PathNet</strong>, and <strong>APU-LDI</strong> are now included by user decision. SuperPC and FBNet remain excluded by scope; TULIP has been removed because it is LiDAR range-image upsampling, not direct point-cloud enhancement for dense RGB point clouds.</div>
 
   <h2>Read Next: Decision Needed</h2>
   <table>
@@ -36,20 +36,6 @@
       <tr><th style="width: 16%;">Method</th><th style="width: 10%;">Task</th><th style="width: 13%;">Publication</th><th style="width: 24%;">Links</th><th>Benchmark Evidence / Why You Should Read</th></tr>
     </thead>
     <tbody>
-      <tr>
-        <td><strong>PD-LTS</strong><br><span class="tag">new</span></td>
-        <td>Denoising</td>
-        <td>CVPR 2024</td>
-        <td><a href="https://openaccess.thecvf.com/content/CVPR2024/html/Mao_Denoising_Point_Clouds_in_Latent_Space_via_Graph_Convolution_and_CVPR_2024_paper.html">paper</a><br><a href="https://github.com/yanbiao1/PD-LTS">code</a></td>
-        <td><span class="bad">Light and heavy smoke negative.</span> Official repo includes light and heavy pretrained FBM checkpoints, and both were run on frame 0000 with XYZ-only input plus RGB transferred back by nearest neighbor <code>k=1</code>. Light checkpoint improves only accuracy/precision and worsens completeness, Chamfer, and F-scores. Heavy checkpoint is worse on all listed geometry metrics: <code>chamfer-L1 50.1062 -> 51.3913</code>, <code>chamfer-L2 2098.37 -> 2192.21</code>, <code>F_10 0.2570 -> 0.2464</code>, <code>F_20 0.4866 -> 0.4726</code>. Read only if you want to decide whether a recent CVPR 2024 latent-space denoising method should be discussed despite negative benchmark evidence.</td>
-      </tr>
-      <tr>
-        <td><strong>PathNet</strong><br><span class="tag">new</span></td>
-        <td>Denoising</td>
-        <td>IEEE TPAMI 2024</td>
-        <td><a href="https://github.com/ZeyongWei/PathNet">paper/code</a><br><a href="https://drive.google.com/drive/folders/1qaxpcqBGVK59HBfTTS68AoaqSWLcp9si?usp=sharing">checkpoint folder</a></td>
-        <td><span class="mix">Smoke mixed; selected-10 running.</span> Frame 0000 slightly worsens CD/Chamfer, but improves recall and F-scores. The UVG run uses a clearly labeled 50K-point Morton-chunked wrapper because the official test path targets about 10K-50K points, while UVG frames are about 0.5M points. Selected-10 job <code>24112993</code> is submitted; read if selected-10 remains mixed-positive or if you want another recent point-cloud-only denoising method in the survey.</td>
-      </tr>
       <tr>
         <td><strong>Pointfilter</strong></td>
         <td>Denoising/filtering</td>
@@ -80,6 +66,9 @@
       <tr><th style="width: 16%;">Method</th><th style="width: 10%;">Task</th><th style="width: 13%;">Publication</th><th style="width: 24%;">Links</th><th>Inclusion Evidence</th></tr>
     </thead>
     <tbody>
+      <tr><td><strong>PD-LTS</strong></td><td>Denoising</td><td>CVPR 2024</td><td><a href="https://openaccess.thecvf.com/content/CVPR2024/html/Mao_Denoising_Point_Clouds_in_Latent_Space_via_Graph_Convolution_and_CVPR_2024_paper.html">paper</a><br><a href="https://github.com/yanbiao1/PD-LTS">code</a></td><td><span class="good">Included by user decision.</span> Light and heavy pretrained FBM checkpoints were smoke-tested on frame 0000 with XYZ-only input and RGB transferred back by nearest neighbor <code>k=1</code>. Objective smoke evidence is negative overall; keep it as a recent CVPR 2024 latent-space denoising method and clearly label the benchmark result as smoke-only/negative.</td></tr>
+      <tr><td><strong>PathNet</strong></td><td>Denoising</td><td>IEEE TPAMI 2024</td><td><a href="https://github.com/ZeyongWei/PathNet">paper/code</a><br><a href="https://drive.google.com/drive/folders/1qaxpcqBGVK59HBfTTS68AoaqSWLcp9si?usp=sharing">checkpoint folder</a></td><td><span class="good">Included by user decision.</span> Selected-10 geometry and texture/perceptual are weak/mixed: F10/F20, YUV-PSNR, and PCQM improve slightly, but CD/Chamfer, projection SSIM, and LPIPS worsen. The UVG run uses a clearly labeled 50K-point Morton-chunked wrapper because official inference targets smaller point clouds.</td></tr>
+      <tr><td><strong>APU-LDI</strong></td><td>Arbitrary upsampling</td><td>AAAI 2024</td><td><a href="https://arxiv.org/abs/2312.15133">paper</a><br><a href="https://github.com/lisj575/APU-LDI">code</a></td><td><span class="good">Included by user decision.</span> PU1K local-LDI checkpoint was isolated and smoke-tested on frame 0000. Current evidence is smoke-only and negative overall: precision improves slightly, but accuracy, completeness, Chamfer, recall, and F-scores worsen. Keep it as a recent arbitrary-scale upsampling method, with the caveat that the benchmark uses the pretrained local-LDI path rather than per-frame global-field optimization.</td></tr>
       <tr><td><strong>PC2-PU</strong></td><td>Upsampling</td><td>ACM MM 2022</td><td><a href="https://arxiv.org/abs/2109.09337">paper</a><br><a href="https://github.com/chenlongwhu/PC2-PU">code</a></td><td><span class="good">Included.</span> Texture/perceptual is positive and geometry is weak-mixed: improves CD_Acc, Chamfer-L1, F10, F20, YUV-PSNR, projection SSIM, LPIPS, and PCQM, while CD_Comp and Chamfer-L2 worsen.</td></tr>
       <tr><td><strong>Neural Points</strong></td><td>Arbitrary upsampling</td><td>CVPR 2022</td><td><a href="https://arxiv.org/abs/2112.04148">paper</a><br><a href="https://github.com/WanquanF/NeuralPoints">code</a></td><td><span class="good">Included.</span> You read and selected it for the final 20. Selected-10 geometry is mixed/positive: completeness, Chamfer-L1, F10, and F20 improve, while accuracy and Chamfer-L2 worsen. Texture/perceptual is mostly negative except PCQM, so keep it clearly labeled as fixed-size patch/object-domain upsampling: each dense UVG frame is reduced to 2048 input points before 16x output.</td></tr>
       <tr><td><strong>PD-Flow</strong></td><td>Normalizing-flow denoising</td><td>ECCV 2022</td><td><a href="https://arxiv.org/abs/2203.05940">paper</a><br><a href="https://github.com/unknownue/pdflow">code</a></td><td><span class="good">Included.</span> You read and selected it for the final 20 as a theory-relevant normalizing-flow denoising method. Benchmark evidence is mixed/negative: smoke improves accuracy/precision and YUV-PSNR/PCQM, but worsens completeness, Chamfer, recall/F-scores, projection SSIM, and LPIPS. Full170 was requested as a broader ablation and failed at frame 0014 inside PD-Flow's dense-frame patch KNN path.</td></tr>
@@ -123,7 +112,6 @@
       <tr><td><strong>RePCD-Net</strong></td><td>Denoising</td><td>IJCV 2022</td><td><a href="https://github.com/chenhonghua/RePCD-Net">code</a></td><td>No usable PyTorch/pretrained path under current TF-skip rule.</td></tr>
       <tr><td><strong>Meta-PU</strong></td><td>Upsampling</td><td>IEEE TVCG 2021</td><td><a href="https://github.com/pleaseconnectwifi/Meta-PU">code</a></td><td>Waiting for compatible pretrained checkpoint.</td></tr>
       <tr><td><strong>PU-Dense</strong></td><td>Upsampling</td><td>IEEE TIP 2022</td><td><a href="https://github.com/aniqueakhtar/PointCloudUpsampling">code</a></td><td>Checkpoint is local for 4x and 8x. README-matched project-storage env can import CPU-only MinkowskiEngine 0.4.3 and load the 4x checkpoint with zero missing/unexpected keys when `LD_PRELOAD=/usr/lib64/libstdc++.so.6` is set. GPU selected-10 remains blocked because the official sparse-conv stack needs CUDA 10.x-compatible nvcc/MinkowskiEngine, while current Snellius modules expose CUDA 12.x.</td></tr>
-      <tr><td><strong>APU-LDI</strong></td><td>Arbitrary upsampling</td><td>AAAI 2024</td><td><a href="https://arxiv.org/abs/2312.15133">paper</a><br><a href="https://github.com/lisj575/APU-LDI">code</a></td><td>Potentially relevant, but checkpoint package is mixed with large datasets/per-shape optimization. Need isolate local LDI checkpoint first.</td></tr>
     </tbody>
   </table>
 </main>

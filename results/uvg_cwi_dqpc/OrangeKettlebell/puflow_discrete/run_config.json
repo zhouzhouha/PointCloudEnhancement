@@ -1,0 +1,13 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "puflow_discrete",
+  "chunk_size": 8192,
+  "num_patch": 256,
+  "up_ratio": 4,
+  "seed": 2021,
+  "device": "cuda"
+}

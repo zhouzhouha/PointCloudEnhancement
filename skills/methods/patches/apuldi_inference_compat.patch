@@ -1,0 +1,135 @@
+diff --git a/local_distance_indicator/models/pointops/functions/pointops.py b/local_distance_indicator/models/pointops/functions/pointops.py
+index 9190d71..3f889dc 100644
+--- a/local_distance_indicator/models/pointops/functions/pointops.py
++++ b/local_distance_indicator/models/pointops/functions/pointops.py
+@@ -1,38 +1,43 @@
+ from typing import Tuple
+ import numpy as np
++import os
+ import torch
+ from torch.autograd import Function
+ import torch.nn as nn
+ 
+ try:
++    if os.environ.get("PCE_FORCE_APULDI_FALLBACKS") == "1":
++        raise ImportError("PCE_FORCE_APULDI_FALLBACKS=1")
+     import pointops_cuda
+ except ImportError:
+     import warnings
+-    import os
+     from torch.utils.cpp_extension import load
+     warnings.warn("Unable to load pointops_cuda cpp extension.")
+-    pointops_cuda_src = os.path.join(os.path.dirname(__file__), "../src")
+-    pointops_cuda = load('pointops_cuda', [
+-        pointops_cuda_src + '/pointops_api.cpp',
+-        pointops_cuda_src + '/ballquery/ballquery_cuda.cpp',
+-        pointops_cuda_src + '/ballquery/ballquery_cuda_kernel.cu',
+-        pointops_cuda_src + '/knnquery/knnquery_cuda.cpp',
+-        pointops_cuda_src + '/knnquery/knnquery_cuda_kernel.cu',
+-        pointops_cuda_src + '/knnquery_heap/knnquery_heap_cuda.cpp',
+-        pointops_cuda_src + '/knnquery_heap/knnquery_heap_cuda_kernel.cu',
+-        pointops_cuda_src + '/grouping/grouping_cuda.cpp',
+-        pointops_cuda_src + '/grouping/grouping_cuda_kernel.cu',
+-        pointops_cuda_src + '/grouping_int/grouping_int_cuda.cpp',
+-        pointops_cuda_src + '/grouping_int/grouping_int_cuda_kernel.cu',
+-        pointops_cuda_src + '/interpolation/interpolation_cuda.cpp',
+-        pointops_cuda_src + '/interpolation/interpolation_cuda_kernel.cu',
+-        pointops_cuda_src + '/sampling/sampling_cuda.cpp',
+-        pointops_cuda_src + '/sampling/sampling_cuda_kernel.cu',
+-        pointops_cuda_src + '/labelstat/labelstat_cuda.cpp',
+-        pointops_cuda_src + '/labelstat/labelstat_cuda_kernel.cu',
+-        pointops_cuda_src + '/featuredistribute/featuredistribute_cuda.cpp',
+-        pointops_cuda_src + '/featuredistribute/featuredistribute_cuda_kernel.cu'
+-    ], build_directory=pointops_cuda_src, verbose=False)
++    if os.environ.get("PCE_FORCE_APULDI_FALLBACKS") == "1":
++        pointops_cuda = None
++    else:
++        pointops_cuda_src = os.path.join(os.path.dirname(__file__), "../src")
++        pointops_cuda = load('pointops_cuda', [
++            pointops_cuda_src + '/pointops_api.cpp',
++            pointops_cuda_src + '/ballquery/ballquery_cuda.cpp',
++            pointops_cuda_src + '/ballquery/ballquery_cuda_kernel.cu',
++            pointops_cuda_src + '/knnquery/knnquery_cuda.cpp',
++            pointops_cuda_src + '/knnquery/knnquery_cuda_kernel.cu',
++            pointops_cuda_src + '/knnquery_heap/knnquery_heap_cuda.cpp',
++            pointops_cuda_src + '/knnquery_heap/knnquery_heap_cuda_kernel.cu',
++            pointops_cuda_src + '/grouping/grouping_cuda.cpp',
++            pointops_cuda_src + '/grouping/grouping_cuda_kernel.cu',
++            pointops_cuda_src + '/grouping_int/grouping_int_cuda.cpp',
++            pointops_cuda_src + '/grouping_int/grouping_int_cuda_kernel.cu',
++            pointops_cuda_src + '/interpolation/interpolation_cuda.cpp',
++            pointops_cuda_src + '/interpolation/interpolation_cuda_kernel.cu',
++            pointops_cuda_src + '/sampling/sampling_cuda.cpp',
++            pointops_cuda_src + '/sampling/sampling_cuda_kernel.cu',
++            pointops_cuda_src + '/labelstat/labelstat_cuda.cpp',
++            pointops_cuda_src + '/labelstat/labelstat_cuda_kernel.cu',
++            pointops_cuda_src + '/featuredistribute/featuredistribute_cuda.cpp',
++            pointops_cuda_src + '/featuredistribute/featuredistribute_cuda_kernel.cu'
++        ], build_directory=pointops_cuda_src, verbose=False)
+ 
+ 
+ class FurthestSampling(Function):
+@@ -675,6 +680,36 @@ def fnv_hash_vec(arr):
+     return hashed_arr
+ 
+ 
++def _fallback_furthestsampling(xyz, m):
++    """Small inference-only FPS fallback for APU-LDI smoke tests."""
++    b, n, _ = xyz.shape
++    m = min(int(m), n)
++    idx = torch.zeros((b, m), dtype=torch.long, device=xyz.device)
++    dist = torch.full((b, n), float("inf"), dtype=xyz.dtype, device=xyz.device)
++    farthest = torch.zeros((b,), dtype=torch.long, device=xyz.device)
++    batch = torch.arange(b, device=xyz.device)
++    for i in range(m):
++        idx[:, i] = farthest
++        centroid = xyz[batch, farthest].unsqueeze(1)
++        dist = torch.minimum(dist, torch.sum((xyz - centroid) ** 2, dim=-1))
++        farthest = torch.max(dist, dim=1)[1]
++    return idx.int()
++
++
++def _fallback_knnquery_heap(nsample, xyz, new_xyz=None):
++    """Inference-only KNN fallback matching pointops' index output shape."""
++    if new_xyz is None:
++        new_xyz = xyz
++    nsample = min(int(nsample), xyz.shape[1])
++    dist = torch.cdist(new_xyz, xyz)
++    return torch.topk(dist, k=nsample, dim=-1, largest=False)[1].int()
++
++
++if pointops_cuda is None:
++    furthestsampling = _fallback_furthestsampling
++    knnquery_heap = _fallback_knnquery_heap
++
++
+ 
+ # import os
+ # os.environ["CUDA_VISIBLE_DEVICES"] = '7'
+@@ -686,4 +721,4 @@ def fnv_hash_vec(arr):
+ # idx = furthestsampling(a, 2)
+ # print(idx)
+ # idx = ballquery(0.5, 3, a, a)
+-# print(idx)
+\ No newline at end of file
++# print(idx)
+diff --git a/local_distance_indicator/models/utils.py b/local_distance_indicator/models/utils.py
+index 0bc9eff..de4c395 100644
+--- a/local_distance_indicator/models/utils.py
++++ b/local_distance_indicator/models/utils.py
+@@ -8,8 +8,13 @@ import random
+ from torch.autograd import grad
+ from einops import rearrange, repeat
+ from sklearn.neighbors import NearestNeighbors
+-from models.Chamfer3D.dist_chamfer_3D import chamfer_3DDist
+-chamfer_dist = chamfer_3DDist()
++try:
++    if os.environ.get("PCE_FORCE_APULDI_FALLBACKS") == "1":
++        raise ImportError("PCE_FORCE_APULDI_FALLBACKS=1")
++    from models.Chamfer3D.dist_chamfer_3D import chamfer_3DDist
++    chamfer_dist = chamfer_3DDist()
++except Exception:
++    chamfer_dist = None
+ import torch.distributed as dist
+ 
+ def set_seed(seed):

@@ -1,0 +1,17 @@
+method,metric,mean,std,count
+cg_baseline,point_count,502941.0,0.0,1
+cg_baseline,y_psnr,17.87026437855683,0.0,1
+cg_baseline,u_psnr,21.369983633346276,0.0,1
+cg_baseline,v_psnr,24.078122227607267,0.0,1
+cg_baseline,yuv_psnr_mean,21.106123413170124,0.0,1
+cg_baseline,projection_ssim_mean,0.6206519121519233,0.0,1
+cg_baseline,projection_lpips_mean,0.459532767534256,0.0,1
+cg_baseline,pcqm,0.118726,0.0,1
+pdflow,point_count,502941.0,0.0,1
+pdflow,y_psnr,17.986783221220815,0.0,1
+pdflow,u_psnr,21.376430425067795,0.0,1
+pdflow,v_psnr,24.110701937064597,0.0,1
+pdflow,yuv_psnr_mean,21.157971861117737,0.0,1
+pdflow,projection_ssim_mean,0.6101180824444306,0.0,1
+pdflow,projection_lpips_mean,0.48525669674078625,0.0,1
+pdflow,pcqm,0.117632,0.0,1

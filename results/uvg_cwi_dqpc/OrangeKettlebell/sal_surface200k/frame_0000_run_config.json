@@ -1,0 +1,15 @@
+{
+  "metric_repo": "/gpfs/home2/xzhou/code/PointCloudEnhancement/third_party/UVG-CWI-Metric",
+  "sequence": "OrangeKettlebell",
+  "frame": "0000",
+  "cg": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC/OrangeKettlebell/cg/15fps/OrangeKettlebell_UVG-CWI-DQPC_CG_15_0_169_0000.ply",
+  "he": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC/OrangeKettlebell/he/15fps/OrangeKettlebell_UVG-CWI-DQPC_HE_15_0_169_0000.ply",
+  "sal": "results/method_outputs/sal/OrangeKettlebell/15fps/frame_0000_surface200k.ply",
+  "thresholds": [
+    5,
+    10,
+    20
+  ],
+  "per_method_csv": "results/uvg_cwi_dqpc/OrangeKettlebell/sal_surface200k/frame_0000_uvg_metric.csv",
+  "comparison_csv": "results/uvg_cwi_dqpc/OrangeKettlebell/sal_surface200k/frame_0000_baseline_vs_sal.csv"
+}

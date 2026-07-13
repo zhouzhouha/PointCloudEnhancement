@@ -1,0 +1,42 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frame": "0000",
+  "variants": [
+    {
+      "name": "igr100_50k_res64_sigma18_lam01",
+      "epochs": 100,
+      "points": 50000,
+      "batch": 8192,
+      "resolution": 64,
+      "sigma": 1.8,
+      "grad_lambda": 0.1
+    },
+    {
+      "name": "igr300_100k_res96_sigma08_lam01",
+      "epochs": 300,
+      "points": 100000,
+      "batch": 8192,
+      "resolution": 96,
+      "sigma": 0.8,
+      "grad_lambda": 0.1
+    },
+    {
+      "name": "igr300_200k_res128_sigma05_lam005",
+      "epochs": 300,
+      "points": 200000,
+      "batch": 8192,
+      "resolution": 128,
+      "sigma": 0.5,
+      "grad_lambda": 0.05
+    },
+    {
+      "name": "igr500_200k_res128_sigma08_lam01",
+      "epochs": 500,
+      "points": 200000,
+      "batch": 8192,
+      "resolution": 128,
+      "sigma": 0.8,
+      "grad_lambda": 0.1
+    }
+  ]
+}

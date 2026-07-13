@@ -1,0 +1,11 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "fbnet_mvp2k",
+  "checkpoint": "/gpfs/home2/xzhou/code/PointCloudEnhancement/third_party/enhancement/3DVision/PointCompletion/FBNet/model/mvp2k_network.pth",
+  "n_input": 2048,
+  "seed": 2026
+}

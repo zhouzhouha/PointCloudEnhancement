@@ -1,0 +1,13 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "pointfilter",
+  "eval_dir": "/gpfs/home2/xzhou/code/PointCloudEnhancement/third_party/enhancement/Pointfilter/Summary/pre_train_model",
+  "eval_iter_nums": 2,
+  "patch_radius": 0.05,
+  "batch_size": 64,
+  "workers": 8
+}

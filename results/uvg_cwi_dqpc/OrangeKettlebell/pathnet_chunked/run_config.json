@@ -1,0 +1,13 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "pathnet_chunked",
+  "chunk_size": 50000,
+  "batch_size": 512,
+  "knn": 128,
+  "iterations": 2,
+  "device": "cuda"
+}

@@ -1,0 +1,23 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000",
+    "0010",
+    "0020",
+    "0030",
+    "0040",
+    "0050",
+    "0060",
+    "0070",
+    "0080",
+    "0090"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "snowflakenet_pu_4x_selected10",
+  "checkpoint": "third_party/enhancement/SnowflakeNet/pretrained/pu/ckpt-pu.pth",
+  "chunk_size": 8192,
+  "patch_num_ratio": 3,
+  "num_per_patch": 256,
+  "up_ratio": 4,
+  "device": "cuda"
+}

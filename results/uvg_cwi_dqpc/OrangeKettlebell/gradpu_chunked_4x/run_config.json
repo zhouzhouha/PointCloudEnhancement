@@ -1,0 +1,13 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "gradpu_chunked_4x",
+  "dataset": "pu1k",
+  "up_rate": 4,
+  "truncate_distance": true,
+  "chunk_size": 2048,
+  "seed": 21
+}

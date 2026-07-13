@@ -12,12 +12,13 @@ This root README is the working plan for benchmarking point cloud enhancement on
 
 Use `OrangeKettlebell` as the toy test because the other sequences should follow the same folder and pairing logic. For every method, use the same 10-frame protocol first: frames `0000`, `0010`, `0020`, `0030`, `0040`, `0050`, `0060`, `0070`, `0080`, and `0090`. These 10 frames are the toy benchmark and the initial quantitative comparison set. The first goal is not to report final paper numbers; it is to prove every metric is implemented, paired, scaled, logged, and reproducible on a consistent frame subset.
 
-Current active scope: keep running and recording methods on the `OrangeKettlebell`
-selected-10 benchmark only. Full-sequence/full-dataset jobs should not be
-submitted until the method list has been written up and selected from the
-10-frame objective and subjective results. The accidentally submitted full170
-jobs `24030797`, `24030799`, `24030800`, and `24030801` were cancelled on
-2026-06-19.
+Current active scope: the user has approved expansion from the
+`OrangeKettlebell` selected-10 benchmark to the full UVG-CWI-DQPC dataset for
+the methods included in the survey/special-issue paper. Full-dataset input data
+must use the high-end point cloud reference (`HE_15`) and the consumer-grade
+15fps v2 point cloud (`CGv2_15`) from the official UVG-CWI-DQPC metadata. The
+accidentally submitted full170 jobs `24030797`, `24030799`, `24030800`, and
+`24030801` were cancelled on 2026-06-19.
 
 Explicit exception: after the user read the PD-Flow paper, PD-Flow was attempted
 on the full 170-frame `OrangeKettlebell` sequence as a broader ablation for the
@@ -91,7 +92,21 @@ Use the SCUTSurface reconstruction methods first: `https://github.com/Gorilla-La
 
 7. Expand after the toy sequence is validated.
    - Apply the exact same runner to all UVG-CWI-DQPC sequences.
+   - Run up to two sequences in parallel per method for the full-dataset pass
+     when GPU availability allows it. This is a throughput setting only; it
+     must not change method inference settings or metric computation.
    - Generate per-frame CSV, per-sequence summary CSV, and an all-sequence aggregate table.
+   - For all-dataset performance, first average all frames within each sequence,
+     then average the 12 per-sequence means. Do not compute the dataset number
+     by pooling all frames directly, because sequences have different frame
+     counts.
+   - If the user includes a method in the survey/special-issue paper, run it on
+     the full dataset even when smoke or selected-10 evidence is negative. Keep
+     the negative evidence in the notes as context, not as a skip decision.
+   - If a method or sequence fails, record the job id, sequence, method, log
+     path, error message, and likely cause in the method status notes, then
+     continue with the remaining sequences and methods. Do not block the whole
+     benchmark on one failed method/sequence.
    - Keep raw metric outputs separate from paper-ready tables.
 
 8. Benchmark reconstruction/enhancement methods by category.

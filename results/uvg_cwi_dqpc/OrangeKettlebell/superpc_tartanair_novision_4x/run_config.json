@@ -1,0 +1,13 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "superpc_tartanair_novision_4x",
+  "checkpoint": "third_party/enhancement/SuperPC/pretrained/tartanair_com.pth",
+  "superpc_dataset": "tartanair",
+  "num_points": 11520,
+  "target_num_points": 46080,
+  "sampling_steps": 25
+}

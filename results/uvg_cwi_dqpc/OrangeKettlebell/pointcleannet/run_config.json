@@ -1,0 +1,13 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "pointcleannet",
+  "nrun": 3,
+  "batch_size": 0,
+  "workers": 1,
+  "cache_capacity": 1,
+  "n_neighbours": 100
+}

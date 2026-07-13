@@ -1,0 +1,12 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "pucrn_pu1k_4x",
+  "chunk_size": 2048,
+  "up_ratio": 4,
+  "seed": 42,
+  "device": "cuda"
+}

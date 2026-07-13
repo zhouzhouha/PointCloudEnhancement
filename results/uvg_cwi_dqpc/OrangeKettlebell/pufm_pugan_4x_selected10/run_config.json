@@ -1,0 +1,24 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000",
+    "0010",
+    "0020",
+    "0030",
+    "0040",
+    "0050",
+    "0060",
+    "0070",
+    "0080",
+    "0090"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "pufm_pugan_4x_selected10",
+  "model": "pufm",
+  "chunk_size": 2048,
+  "up_rate": 4,
+  "num_points": 256,
+  "steps": 5,
+  "seed": 42,
+  "device": "cuda"
+}

@@ -1,0 +1,15 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "pu_gaussian_pu1k_4x",
+  "checkpoint": "pu1k",
+  "patch_size": 10000,
+  "patch_rate": 3,
+  "up_ratio": 4,
+  "num_samples": 6,
+  "distribution": "gaussian",
+  "training_stage": 2
+}

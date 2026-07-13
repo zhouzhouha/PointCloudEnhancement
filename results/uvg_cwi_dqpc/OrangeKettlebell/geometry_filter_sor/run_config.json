@@ -1,0 +1,23 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000",
+    "0010",
+    "0020",
+    "0030",
+    "0040",
+    "0050",
+    "0060",
+    "0070",
+    "0080",
+    "0090"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "geometry_filter_sor",
+  "sor_neighbors": 20,
+  "sor_std_ratio": 2.0,
+  "radius": 0.0,
+  "radius_neighbors": 16,
+  "voxel_size": 0.0,
+  "color_knn": 1
+}

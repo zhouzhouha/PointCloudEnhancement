@@ -1,0 +1,12 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "sapcu_4x_2048",
+  "input_points": 2048,
+  "output_points": 8192,
+  "seed": 42,
+  "device": "cuda"
+}

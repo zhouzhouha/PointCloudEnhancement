@@ -1,0 +1,31 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000",
+    "0010",
+    "0020",
+    "0030",
+    "0040",
+    "0050",
+    "0060",
+    "0070",
+    "0080",
+    "0090"
+  ],
+  "epochs": 500,
+  "input_points": 200000,
+  "sample_points": 200000,
+  "resolution": 128,
+  "mc_values": [
+    0.0,
+    0.0025,
+    0.005,
+    0.01,
+    0.02
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_output_root": "/gpfs/home2/xzhou/code/PointCloudEnhancement/results/method_outputs/sal/OrangeKettlebell/15fps",
+  "per_frame_csv": "/gpfs/home2/xzhou/code/PointCloudEnhancement/results/uvg_cwi_dqpc/OrangeKettlebell/sal_selected10/per_frame_metrics.csv",
+  "comparison_csv": "/gpfs/home2/xzhou/code/PointCloudEnhancement/results/uvg_cwi_dqpc/OrangeKettlebell/sal_selected10/baseline_vs_sal_by_frame.csv",
+  "summary_csv": "/gpfs/home2/xzhou/code/PointCloudEnhancement/results/uvg_cwi_dqpc/OrangeKettlebell/sal_selected10/summary_metrics.csv"
+}

@@ -1,0 +1,12 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "pdflow",
+  "patch_size": 1024,
+  "cluster_size": 10000,
+  "niters": 1,
+  "seed": 2021
+}

@@ -1,0 +1,12 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "snowflakenet_pcn_cd1",
+  "model_config": "/gpfs/home2/xzhou/code/PointCloudEnhancement/third_party/enhancement/SnowflakeNet/completion/configs/pcn_cd1.yaml",
+  "checkpoint": "/gpfs/home2/xzhou/code/PointCloudEnhancement/third_party/enhancement/SnowflakeNet/pretrained/completion/ckpt-best-pcn-cd_l1.pth",
+  "n_input": 2048,
+  "seed": 2026
+}

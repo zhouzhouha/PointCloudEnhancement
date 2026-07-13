@@ -1,0 +1,16 @@
+{
+  "sequence": "OrangeKettlebell",
+  "frames": [
+    "0000"
+  ],
+  "dataset_root": "/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC",
+  "method_name": "iterativepfn",
+  "device": "cuda",
+  "patch_size": 1000,
+  "niters": 1,
+  "num_modules_to_use": null,
+  "patch_stitching": true,
+  "seed_k": 6,
+  "seed_k_alpha": 10,
+  "seed": 2020
+}
