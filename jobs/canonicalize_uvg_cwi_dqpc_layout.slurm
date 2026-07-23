@@ -1,6 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=uvg_layout
-#SBATCH --partition=staging
+#SBATCH --account=project_465003117
+#SBATCH --partition=small
+#SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
@@ -10,9 +12,11 @@
 
 set -euo pipefail
 
-cd /gpfs/home2/xzhou/code/PointCloudEnhancement
+source /project/project_465003117/xuemei/PointCloudEnhancement/jobs/lumi_job_env.sh
+pce_lumi_init cpu
+cd "${PCE_REPO_ROOT}"
 
-DATA_ROOT=/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC
+DATA_ROOT="${PCE_DATASET_ROOT}"
 SEQUENCES=(
   BlueSpeech
   BlueVolley
@@ -53,6 +57,6 @@ for seq in "${SEQUENCES[@]}"; do
   echo "${seq}: he=${he_count} cg=${cg_count} he_link=${he_link} cg_link=${cg_link}"
 done
 
-python -u scripts/build_uvg_dataset_manifest.py \
+"${PCE_PYTHON[@]}" -u scripts/build_uvg_dataset_manifest.py \
   --dataset-root "$DATA_ROOT" \
   --out results/full_dataset/uvg_cwi_dqpc_he15_cgv2_15_manifest.csv

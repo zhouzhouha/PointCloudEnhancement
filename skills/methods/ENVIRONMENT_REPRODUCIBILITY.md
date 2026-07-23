@@ -28,6 +28,41 @@ Runtime snapshot captured on 2026-06-19:
 | LPIPS | installed, no `__version__` exposed |
 | OpenCV Python | not importable in `torch_env` |
 
+## LUMI Runtime Bootstrap
+
+The Snellius `torch_env` cannot be activated directly on LUMI because its
+absolute Anaconda path does not exist there. The benchmark will use the NVIDIA
+A40 GPUs on LUMI-D and a CUDA container matching the Snellius Torch/CUDA stack
+as closely as possible. The LUMI full-dataset Slurm templates bootstrap through
+`jobs/lumi_job_env.sh` with these defaults:
+
+| Item | LUMI value / status |
+| --- | --- |
+| Base image source | `docker://pytorch/pytorch:2.4.1-cuda12.1-cudnn9-devel` |
+| Local SIF | `/project/project_465003117/containers/pce-pytorch-2.4.1-cu121-devel.sif` |
+| Base PyTorch | 2.4.1 / CUDA 12.1 |
+| GPU architecture | NVIDIA A40, compute capability 8.6 |
+| Overlay venv | `/project/project_465003117/envs/PointCloudEnhancement/lumi_cuda_torch_env` |
+| GPU partition/resource | `lumid`, `--gpus-per-node=1`, maximum 12 hours |
+| CPU partition | `small` |
+| Core venv build job | `jobs/build_lumi_cuda_environment.slurm`; job `19843196` completed |
+| A40 validation | `jobs/smoke_lumi_cuda_environment.slurm`; job `19843220` completed |
+
+Create the overlay venv from inside the base image with
+`--system-site-packages`; this preserves the image's CUDA-enabled PyTorch while
+adding benchmark packages. Freeze the finished environment before method
+execution. Custom extensions must still be rebuilt for the A40 (`sm_86`) and
+audited per method. Do not silently rewrite method internals during that audit.
+
+The core venv pins its tracked packages in
+`skills/methods/lumi_cuda_metric_requirements.txt`. Open3D 0.19 is deferred:
+both the normal and `open3d-cpu` Linux wheels still link to `libX11.so.6`, which
+is absent from the Ubuntu CUDA container, while LUMI host X11 libraries require
+a newer glibc than the container. PathNet and UVG-CWI/Metric use SciPy/trimesh
+instead, so this does not block their inference or geometry evaluation. Add a
+separately reproducible X11/Open3D runtime layer before running a method that
+imports Open3D.
+
 ## Current Method Environment Mapping
 
 | Method group / methods | Current env | Dedicated env needed before full dataset? | Notes |

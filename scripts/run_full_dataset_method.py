@@ -152,6 +152,16 @@ METHODS = {
         "script": "scripts/run_gradpu_selected_frames.py",
         "method_name": "gradpu_chunked_4x_full",
         "args": ["--up-rate", "4", "--chunk-size", "2048"],
+        "results_root": True,
+    },
+    "iterativepfn": {
+        "script": "scripts/run_iterativepfn_selected_frames.py",
+        "method_name": "iterativepfn_full",
+        "args": [
+            "--device", "cuda", "--patch-size", "1000", "--niters", "1",
+            "--seed-k", "6", "--seed-k-alpha", "10",
+        ],
+        "results_root": True,
     },
 }
 
@@ -202,14 +212,26 @@ def ensure_project_symlinks(method_name: str, sequence: str, results_root: Path)
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--method", required=True, choices=sorted(METHODS))
+    parser.add_argument(
+        "--method-name",
+        help="Override the configured result name, for immutable/resumable batch runs",
+    )
     parser.add_argument("--sequence", required=True)
     parser.add_argument("--dataset-root", type=Path, default=DEFAULT_DATASET_ROOT)
     parser.add_argument("--results-root", type=Path, default=PROJECT_RESULTS)
+    parser.add_argument("--frames", nargs="+", help="Optional paired frame IDs for compatibility smoke/resume runs")
     args = parser.parse_args()
 
     spec = METHODS[args.method]
-    method_name = str(spec["method_name"])
-    frames = common_frames(args.dataset_root, args.sequence)
+    method_name = args.method_name or str(spec["method_name"])
+    paired_frames = common_frames(args.dataset_root, args.sequence)
+    if args.frames:
+        missing = sorted(set(args.frames) - set(paired_frames))
+        if missing:
+            raise ValueError(f"Requested frames are not paired for {args.sequence}: {missing}")
+        frames = args.frames
+    else:
+        frames = paired_frames
     ensure_project_symlinks(method_name, args.sequence, args.results_root)
 
     env = os.environ.copy()
@@ -218,6 +240,16 @@ def main() -> None:
     Path(env["TORCH_EXTENSIONS_DIR"]).mkdir(parents=True, exist_ok=True)
     Path(env["TMPDIR"]).mkdir(parents=True, exist_ok=True)
     env.update(spec.get("env", {}))
+
+    method_args = list(spec["args"])
+    if args.method == "iterativepfn" and os.environ.get("PCE_ITERATIVEPFN_PATCH_SIZE"):
+        patch_size = os.environ["PCE_ITERATIVEPFN_PATCH_SIZE"]
+        patch_index = method_args.index("--patch-size") + 1
+        method_args[patch_index] = patch_size
+    if args.method == "iterativepfn" and os.environ.get("PCE_ITERATIVEPFN_SEED_K_ALPHA"):
+        seed_k_alpha = os.environ["PCE_ITERATIVEPFN_SEED_K_ALPHA"]
+        alpha_index = method_args.index("--seed-k-alpha") + 1
+        method_args[alpha_index] = seed_k_alpha
 
     cmd = [
         sys.executable,
@@ -231,7 +263,7 @@ def main() -> None:
         str(args.dataset_root),
         "--method-name",
         method_name,
-        *list(spec["args"]),
+        *method_args,
     ]
     if spec.get("results_root"):
         cmd.extend(["--results-root", str(args.results_root)])

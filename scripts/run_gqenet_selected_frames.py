@@ -130,6 +130,7 @@ def main():
     parser.add_argument("--sequence", default="OrangeKettlebell")
     parser.add_argument("--frames", nargs="+", default=["0000"])
     parser.add_argument("--dataset-root", type=Path, default=DATASET_ROOT)
+    parser.add_argument("--results-root", type=Path, default=REPO_ROOT / "results")
     parser.add_argument("--method-name", default="gqenet")
     parser.add_argument("--test-batch-size", type=int, default=8)
     args = parser.parse_args()
@@ -143,13 +144,13 @@ def main():
         if not path.exists():
             raise FileNotFoundError(path)
 
-    work_root = REPO_ROOT / "results" / "work" / args.method_name / args.sequence / "15fps"
+    work_root = args.results_root / "work" / args.method_name / args.sequence / "15fps"
     ori_root = work_root / "ori"
     rec_root = work_root / "rec"
     pred_root = work_root / "pred"
     log_root = work_root / "logs"
-    out_root = REPO_ROOT / "results" / "method_outputs" / args.method_name / args.sequence / "15fps"
-    metric_root = REPO_ROOT / "results" / "uvg_cwi_dqpc" / args.sequence / args.method_name
+    out_root = args.results_root / "method_outputs" / args.method_name / args.sequence / "15fps"
+    metric_root = args.results_root / "uvg_cwi_dqpc" / args.sequence / args.method_name
     for path in [ori_root, rec_root, pred_root, log_root, out_root, metric_root]:
         path.mkdir(parents=True, exist_ok=True)
 

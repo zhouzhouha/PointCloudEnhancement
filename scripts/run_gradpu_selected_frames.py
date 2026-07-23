@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -64,6 +65,7 @@ def main():
     parser.add_argument("--sequence", default="OrangeKettlebell")
     parser.add_argument("--frames", nargs="+", default=["0000"])
     parser.add_argument("--dataset-root", type=Path, default=common.DATASET_ROOT)
+    parser.add_argument("--results-root", type=Path, default=common.REPO_ROOT / "results")
     parser.add_argument("--method-name", default="gradpu")
     parser.add_argument("--dataset", default="pu1k", choices=["pu1k"])
     parser.add_argument("--up-rate", type=int, default=4)
@@ -90,8 +92,8 @@ def main():
     model.load_state_dict(torch.load(str(GRADPU_CKPT), map_location="cuda"))
     model.eval()
 
-    out_root = common.REPO_ROOT / "results" / "method_outputs" / args.method_name / args.sequence / "15fps"
-    metric_root = common.REPO_ROOT / "results" / "uvg_cwi_dqpc" / args.sequence / args.method_name
+    out_root = args.results_root / "method_outputs" / args.method_name / args.sequence / "15fps"
+    metric_root = args.results_root / "uvg_cwi_dqpc" / args.sequence / args.method_name
     for path in [out_root, metric_root]:
         path.mkdir(parents=True, exist_ok=True)
 
@@ -108,7 +110,14 @@ def main():
         upsampled_points = upsample_chunked(model, pcd_upsample, model_args, source_points, args.chunk_size)
         upsampled_colors = common.transfer_nearest_colors(source_points, source_colors, upsampled_points)
         out = out_root / f"frame_{frame}.ply"
-        common.write_xyzrgb_ply(out, upsampled_points, upsampled_colors)
+        if out.exists():
+            raise FileExistsError(f"refusing to overwrite immutable output: {out}")
+        partial = out.with_name(f".{out.name}.part-{os.getpid()}")
+        try:
+            common.write_xyzrgb_ply(partial, upsampled_points, upsampled_colors)
+            partial.replace(out)
+        finally:
+            partial.unlink(missing_ok=True)
         counts.append({"frame": frame, "input_points": len(source_points), "output_points": len(upsampled_points), "has_color": True})
         print(f"{frame}: {len(source_points)} -> {len(upsampled_points)} points, output={out}", flush=True)
 

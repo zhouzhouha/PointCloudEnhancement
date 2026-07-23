@@ -1,18 +1,22 @@
 #!/bin/bash
 #SBATCH --job-name=pce_tex_full
-#SBATCH --partition=gpu_a100
-#SBATCH --gpus=1
+#SBATCH --account=project_465003117
+#SBATCH --partition=lumid
+#SBATCH --nodes=1
+#SBATCH --gpus-per-node=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=110G
-#SBATCH --time=1-00:00:00
+#SBATCH --time=12:00:00
 #SBATCH --array=0-11%1
 #SBATCH --output=logs/full_dataset_texture_%A_%a.out
 #SBATCH --error=logs/full_dataset_texture_%A_%a.err
 
 set -euo pipefail
 
-cd /gpfs/home2/xzhou/code/PointCloudEnhancement
+source /project/project_465003117/xuemei/PointCloudEnhancement/jobs/lumi_job_env.sh
+pce_lumi_init nvidia
+cd "${PCE_REPO_ROOT}"
 mkdir -p logs
 
 SEQUENCES=(
@@ -31,18 +35,13 @@ SEQUENCES=(
 )
 SEQUENCE="${SEQUENCES[$SLURM_ARRAY_TASK_ID]}"
 
-source /sw/arch/RHEL8/EB_production/2023/software/Anaconda3/2023.07-2/etc/profile.d/conda.sh
-conda activate torch_env
-
-export TMPDIR=/gpfs/work3/0/prjs0839/results/PointCloudEnhancement/full_dataset/tmp
-mkdir -p "$TMPDIR"
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
 
-srun python -u scripts/run_texture_perceptual_metrics.py \
+srun "${PCE_PYTHON[@]}" -u scripts/run_texture_perceptual_metrics.py \
   --sequence "$SEQUENCE" \
-  --frames $(python - <<PY
+  --frames $("${PCE_PYTHON[@]}" - <<PY
 from pathlib import Path
-root = Path('/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC') / '$SEQUENCE'
+root = Path('${PCE_DATASET_ROOT}') / '$SEQUENCE'
 cg = {p.stem.split('_')[-1] for p in (root / 'cg' / '15fps').glob('*.ply')}
 he = {p.stem.split('_')[-1] for p in (root / 'he' / '15fps').glob('*.ply')}
 print(' '.join(sorted(cg & he)))
@@ -72,7 +71,7 @@ PY
     snowflakenet_pu_4x_full \
     pu_gaussian_pu1k_4x_full \
     gradpu_chunked_4x_full \
-  --dataset-root /gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC \
+  --dataset-root "${PCE_DATASET_ROOT}" \
   --run-name full_dataset \
   --image-size 512 \
-  --tmp-dir "$TMPDIR"
+  --tmp-dir "${TMPDIR}"

@@ -28,7 +28,10 @@ import run_mag_selected_frames as common
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PCQM_BIN = REPO_ROOT / "third_party" / "metrics" / "PCQM" / "build" / "PCQM"
+PCQM_BIN = Path(os.environ.get(
+    "PCE_PCQM_BIN",
+    REPO_ROOT / "third_party" / "metrics" / "PCQM" / "build" / "PCQM",
+))
 TYPE_FORMATS = {
     "char": "b",
     "int8": "b",
@@ -214,10 +217,29 @@ def run_pcqm(pred_points, pred_colors, ref_points, ref_colors, tmp_root: Path, s
     pred_ply = tmp_root / f"{stem}_pred.ply"
     write_ascii_xyzrgb_ply(ref_ply, ref_points, ref_colors)
     write_ascii_xyzrgb_ply(pred_ply, pred_points, pred_colors)
+    resource_root = PCQM_BIN.parent
+    resource_names = (
+        "L_data.txt",
+        "RegularGridInit_0_0_1.txt",
+        "RegularGridInit_0_0_2.txt",
+        "RegularGrid_0_0_1.txt",
+        "RegularGrid_0_0_2.txt",
+    )
+    for name in resource_names:
+        target = tmp_root / name
+        if not target.exists():
+            source = resource_root / name
+            if not source.exists():
+                source = resource_root.parent / "resources" / name
+            if not source.exists():
+                raise FileNotFoundError(f"missing PCQM resource: {name}")
+            shutil.copy2(source, target)
     # The upstream README documents "reference registered", but main.cpp assigns
     # argv[2] to the reference and argv[1] to the registered/distorted cloud.
-    subprocess.run([str(PCQM_BIN), str(pred_ply), str(ref_ply), "-r", "0.004", "-knn", "20", "-rx", "2.0"], cwd=str(PCQM_BIN.parent), check=True)
-    csv_path = PCQM_BIN.parent / "features_extracted.csv"
+    # PCQM always writes features_extracted.csv in its working directory.
+    # Use the task-private temporary directory so concurrent jobs cannot race.
+    subprocess.run([str(PCQM_BIN), str(pred_ply), str(ref_ply), "-r", "0.004", "-knn", "20", "-rx", "2.0"], cwd=str(tmp_root), check=True)
+    csv_path = tmp_root / "features_extracted.csv"
     if not csv_path.exists():
         return float("nan")
     rows = list(csv.DictReader(csv_path.open(encoding="ascii"), delimiter=";"))
@@ -245,6 +267,8 @@ def main():
     parser.add_argument("--frames", nargs="+", default=["0000"])
     parser.add_argument("--methods", nargs="+", required=True, help="Method names under results/method_outputs")
     parser.add_argument("--dataset-root", type=Path, default=common.DATASET_ROOT)
+    parser.add_argument("--results-root", type=Path, default=REPO_ROOT / "results",
+                        help="Root containing method_outputs; defaults to the repository results directory.")
     parser.add_argument("--run-name", default="selected10")
     parser.add_argument("--image-size", type=int, default=512)
     parser.add_argument("--tmp-dir", type=Path, default=None, help="Directory for large temporary PCQM PLY files; defaults to $TMPDIR if set.")
@@ -253,7 +277,9 @@ def main():
     parser.add_argument("--save-renders", action="store_true")
     args = parser.parse_args()
 
-    out_root = REPO_ROOT / "results" / "texture_perceptual_metrics" / args.sequence / args.run_name
+    out_root = args.results_root / "texture_perceptual_metrics" / args.sequence / args.run_name
+    if out_root.exists() and any(out_root.iterdir()):
+        raise FileExistsError(f"refusing to overwrite non-empty result directory: {out_root}")
     out_root.mkdir(parents=True, exist_ok=True)
     render_root = out_root / "renders" if args.save_renders else None
 
@@ -276,7 +302,7 @@ def main():
             ref_points, ref_colors = read_xyzrgb_ply(ref_path)
             candidates = [("cg_baseline", common.find_frame(cg_dir, frame))]
             for method in args.methods:
-                candidates.append((method, REPO_ROOT / "results" / "method_outputs" / method / args.sequence / "15fps" / f"frame_{frame}.ply"))
+                candidates.append((method, args.results_root / "method_outputs" / method / args.sequence / "15fps" / f"frame_{frame}.ply"))
             for method, pred_path in candidates:
                 if not pred_path.exists():
                     print(f"[skip] missing {method} frame {frame}: {pred_path}", flush=True)

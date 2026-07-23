@@ -1,6 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=uvg_dqpc_dl
-#SBATCH --partition=staging
+#SBATCH --account=project_465003117
+#SBATCH --partition=small
+#SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
@@ -9,10 +11,12 @@
 
 set -euo pipefail
 
-cd /gpfs/home2/xzhou/code/PointCloudEnhancement
+source /project/project_465003117/xuemei/PointCloudEnhancement/jobs/lumi_job_env.sh
+pce_lumi_init cpu
+cd "${PCE_REPO_ROOT}"
 
-DATA_PARENT=/gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC
-DATA_ROOT="${DATA_PARENT}/UVG-CWI-DQPC"
+DATA_ROOT="${PCE_DATASET_ROOT}"
+DATA_PARENT="$(dirname "${DATA_ROOT}")"
 ZIP_DIR="${DATA_ROOT}/__zip"
 JSON_FILE="${DATA_ROOT}/UVG-CWI-DQPC.json"
 JSON_URL="https://ultravideo.fi/UVG-CWI-DQPC/UVG-CWI-DQPC.json"

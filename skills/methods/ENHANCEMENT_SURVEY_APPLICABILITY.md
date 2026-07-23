@@ -20,7 +20,7 @@ UVG-CWI-DQPC provides paired dynamic point cloud frames:
 
 For fair benchmarking, method core settings should remain official/default. Adapters may only convert file format, split/merge large frames when the method already supports patch processing, transfer color by nearest original CG point with `k=1` for geometry-only outputs, and evaluate with the same UVG-CWI metric runner.
 
-This survey benchmark focuses on point-cloud-only enhancement: degraded point cloud in, enhanced point cloud out. Multimodal methods that additionally require RGB images, depth images, or RGB-D inputs are outside the main benchmarking scope because they introduce extra requirements for image availability, calibration, foreground alignment, and modality-specific preprocessing. SuperPC has been read and is excluded from the main benchmark under this rule: it formulates restoration as an image-and-point-cloud conditioned diffusion problem using image-point-cloud fusion to construct raw, local, and global conditions. It can be mentioned only as an excluded multimodal/background method if the survey discusses scope boundaries.
+This survey benchmark focuses on point-cloud-only enhancement: degraded point cloud in, enhanced point cloud out. Multimodal methods that additionally require RGB images, depth images, or RGB-D inputs are outside its experimental scope because they introduce extra requirements for image availability, calibration, foreground alignment, and modality-specific preprocessing. SuperPC was read and included in the survey/Overleaf on 2026-07-23, but it is not point-cloud-only: the paper-faithful evaluation uses image-and-point-cloud conditioning and image-point-cloud fusion to construct raw, local, and global conditions. The user confirmed that SuperPC must not be run on the point-cloud-only UVG-CWI-DQPC benchmark. Retain the earlier no-vision smoke only as an ablation, not as a published-method result.
 
 ## Important Findings From The Surveys
 
@@ -43,7 +43,7 @@ These are the best first external enhancement candidates because UVG-CWI-DQPC CG
 | Method | Source category | Typical input | Typical output | Code/pretrained status | UVG applicability | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | PointCleanNet | Denoising/outlier removal | Dense noisy XYZ point cloud, local patches | Denoised XYZ, may move/remove points | Code and pretrained model available locally; smoke running | High as external baseline | Already running on frame `0000`; record as external, not SCUTSurface. Needs `k=1` color transfer. |
-| Pointfilter | Denoising | Noisy XYZ point cloud and neighborhoods | Filtered/denoised XYZ | Code listed in both survey tracks | High | Good next denoising candidate after PointCleanNet if checkpoint/setup is usable. Geometry-only. |
+| Pointfilter | Denoising | Noisy XYZ point cloud and neighborhoods | Filtered/denoised XYZ | Historical selected-10 results retained | Excluded | Published in 2020, outside the 2021+ cutoff. Do not run again; retain existing outputs only as historical evidence. |
 | Total Denoising | Unsupervised denoising | Noisy XYZ point cloud | Cleaned XYZ | Code listed | Medium-High | Useful because unsupervised; may avoid domain mismatch from pretrained object datasets. Need inspect scalability to 500k-point frames. |
 | DMRDenoise / DMR | Denoising | Noisy XYZ point cloud | Denoised/downsampled XYZ | Code and checkpoint local | Medium; current default failed | Official default failed on UVG frame due internal KNN/patch tensor mismatch. Do not tune unless separately labeled. |
 | Score-Based Point Cloud Denoising | Denoising | Noisy XYZ point cloud; large-cloud script exists | Denoised XYZ | Code and checkpoint local; environment not built | High if environment can be built | Strong candidate, but needs old PyTorch3D/torch-cluster environment. Hold until external phase. |
@@ -118,7 +118,7 @@ Keep two tracks separate.
 ### Track B: External Enhancement Methods From Surveys
 
 1. Finish current PointCleanNet smoke only; record as external.
-2. Denoising next: Pointfilter, Total Denoising, Score-Denoise, PD-Flow, IterativePFN.
+2. Denoising next: Total Denoising, Score-Denoise, PD-Flow, IterativePFN. Pointfilter is excluded by the 2021+ cutoff and must not be rerun.
 3. Upsampling next: ZSPU, PU-GCN, PUGeo-Net, MPU/3PU, Flexible-PU.
 4. Temporal/texture next: VPU or dynamic attribute enhancement methods if code/checkpoints exist.
 5. Completion last: PoinTr, SnowflakeNet, SeedFormer, GRNet, PCN, only as domain-transfer experiments.

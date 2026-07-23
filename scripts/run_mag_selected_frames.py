@@ -5,8 +5,6 @@ XYZ, runs the pretrained MAG checkpoint with official large-cloud inference,
 then transfers RGB from the original CG frame by nearest neighbor (`k=1`).
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import json
@@ -133,7 +131,10 @@ def write_summary(rows, summary_csv: Path):
             method_rows = [row for row in rows if row["method"] == method]
             for metric in metrics:
                 values = np.array([float(row[metric]) for row in method_rows], dtype=float)
-                writer.writerow({"method": method, "metric": metric, "mean": np.nanmean(values), "std": np.nanstd(values), "count": len(values)})
+                finite_values = values[np.isfinite(values)]
+                mean = float(np.mean(finite_values)) if finite_values.size else float("nan")
+                std = float(np.std(finite_values)) if finite_values.size else float("nan")
+                writer.writerow({"method": method, "metric": metric, "mean": mean, "std": std, "count": len(values)})
 
 
 def main():

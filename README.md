@@ -31,11 +31,14 @@ to the model and then transfers RGB to the enhanced geometry by nearest-neighbor
 was resubmitted as job `24076375` with work files, method outputs, and metrics
 redirected to `/gpfs/work3/0/prjs0839/results/PointCloudEnhancement/results`.
 
-Survey exclusion tracking:
+Survey scope tracking:
 
-- SuperPC: paper read and excluded from the main benchmark because it is a
-  multimodal image-and-point-cloud conditioned method, not a point-cloud-only
-  enhancement method.
+- SuperPC: paper read and included in the survey/Overleaf on 2026-07-23. The
+  paper-faithful method is multimodal and requires image plus point-cloud
+  conditioning. The user confirmed that this additional input makes it
+  unsuitable for the point-cloud-only UVG-CWI-DQPC benchmark, so do not submit
+  further SuperPC jobs. The existing no-vision UVG smoke is retained only as an
+  ablation and is not a faithful evaluation of the published method.
 - FBNet: paper read and excluded from the survey benchmark because it is a
   partial point cloud completion method. Its input/output assumption is partial
   completion rather than degraded dense point cloud enhancement, so its smoke
