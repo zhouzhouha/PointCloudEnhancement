@@ -206,7 +206,11 @@ def ensure_project_symlinks(method_name: str, sequence: str, results_root: Path)
                 continue
             link.unlink()
         if not link.exists():
-            link.symlink_to(target, target_is_directory=True)
+            try:
+                link.symlink_to(target, target_is_directory=True)
+            except FileExistsError:
+                if not (link.is_symlink() and link.resolve() == target):
+                    raise
 
 
 def main() -> None:
