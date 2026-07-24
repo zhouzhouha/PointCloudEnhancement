@@ -1,0 +1,34 @@
+diff --git a/third_party/enhancement/MAG/utils/denoise.py b/third_party/enhancement/MAG/utils/denoise.py
+--- a/third_party/enhancement/MAG/utils/denoise.py
++++ b/third_party/enhancement/MAG/utils/denoise.py
+@@
+ def patch_based_denoise(model, pcl_noisy, ld_step_size=0.2, ld_num_steps=30, patch_size=1000, seed_k=3, denoise_knn=4, step_decay=0.95, get_traj=False):
+@@
+     """
+     assert pcl_noisy.dim() == 2, 'The shape of input point cloud must be (N, 3).'
+     N, d = pcl_noisy.size()
++    if N == 0:
++        return pcl_noisy.clone()
++    if N < 17:
++        # The pretrained feature extractor uses 16-NN plus self-offset. Tiny
++        # KMeans residual clusters cannot be denoised by the official model.
++        return pcl_noisy.clone()
++    patch_size = min(patch_size, N)
++    num_seed_points = max(1, int(seed_k * N / patch_size))
+     pcl_noisy = pcl_noisy.unsqueeze(0)  # (1, N, 3)
+-    seed_pnts, _ = farthest_point_sampling(pcl_noisy, int(seed_k * N / patch_size))
++    seed_pnts, _ = farthest_point_sampling(pcl_noisy, num_seed_points)
+     _, _, patches = pytorch3d.ops.knn_points(seed_pnts, pcl_noisy, K=patch_size, return_nn=True)
+     patches = patches[0]    # (N, K, 3)
+@@
+     pcl_parts = []
+     for i in tqdm(range(n_clusters), desc='Denoise Clusters'):
+         pts_idx = kmeans.labels_ == i
++        if not np.any(pts_idx):
++            continue
+ 
+         pcl_part_noisy = torch.FloatTensor(pcl[pts_idx]).to(device)
++        if pcl_part_noisy.size(0) < 17:
++            pcl_parts.append(pcl_part_noisy)
++            continue
+         pcl_part_noisy, center, scale = NormalizeUnitSphere.normalize(pcl_part_noisy)

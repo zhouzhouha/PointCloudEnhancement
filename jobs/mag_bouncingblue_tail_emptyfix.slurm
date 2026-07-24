@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=pce_continue
+#SBATCH --job-name=mag_tail_fix
 #SBATCH --account=mcsei7083
 #SBATCH --partition=gpu_a100
 #SBATCH --gpus=1
@@ -7,37 +7,13 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=180G
 #SBATCH --time=2-00:00:00
-#SBATCH --array=0-0%1
-#SBATCH --output=logs/snellius_continue_%x_%A_%a.out
-#SBATCH --error=logs/snellius_continue_%x_%A_%a.err
+#SBATCH --output=logs/%x_%j.out
+#SBATCH --error=logs/%x_%j.err
 
 set -euo pipefail
 
 cd /gpfs/home2/xzhou/code/PointCloudEnhancement
 mkdir -p logs
-
-if [ -z "${METHOD:-}" ]; then
-  echo "METHOD environment variable is required" >&2
-  exit 2
-fi
-
-if [ -n "${SEQUENCES_FILE:-}" ]; then
-  if [ ! -f "$SEQUENCES_FILE" ]; then
-    echo "SEQUENCES_FILE does not exist: $SEQUENCES_FILE" >&2
-    exit 2
-  fi
-  mapfile -t SEQUENCES < <(grep -v '^[[:space:]]*$' "$SEQUENCES_FILE")
-elif [ -n "${SEQUENCES_CSV:-}" ]; then
-  IFS=',' read -r -a SEQUENCES <<< "$SEQUENCES_CSV"
-else
-  echo "SEQUENCES_FILE or SEQUENCES_CSV environment variable is required" >&2
-  exit 2
-fi
-if [ "${SLURM_ARRAY_TASK_ID}" -ge "${#SEQUENCES[@]}" ]; then
-  echo "SLURM_ARRAY_TASK_ID=${SLURM_ARRAY_TASK_ID} outside SEQUENCES_CSV length=${#SEQUENCES[@]}" >&2
-  exit 2
-fi
-SEQUENCE="${SEQUENCES[$SLURM_ARRAY_TASK_ID]}"
 
 module purge
 module load 2023
@@ -53,10 +29,9 @@ export TORCH_EXTENSIONS_DIR=/gpfs/work3/0/prjs0839/results/PointCloudEnhancement
 export TMPDIR=/gpfs/work3/0/prjs0839/results/PointCloudEnhancement/full_dataset/tmp
 mkdir -p "$TORCH_EXTENSIONS_DIR" "$TMPDIR"
 
-echo "[continue] method=${METHOD} sequence=${SEQUENCE} job=${SLURM_JOB_ID} task=${SLURM_ARRAY_TASK_ID}"
-
 srun python -u scripts/run_full_dataset_method.py \
-  --method "$METHOD" \
-  --sequence "$SEQUENCE" \
+  --method mag \
+  --sequence BouncingBlue \
+  --frames 0149 0150 0151 0152 0153 0154 0155 0156 \
   --dataset-root /gpfs/work3/0/prjs0839/data/UVG_CWI_DQPC/UVG-CWI-DQPC \
   --results-root /gpfs/work3/0/prjs0839/results/PointCloudEnhancement/full_dataset/results
