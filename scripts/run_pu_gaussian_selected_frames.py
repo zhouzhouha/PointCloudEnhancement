@@ -8,6 +8,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -37,6 +38,8 @@ def run_official_inference(
     raw_output_path.parent.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["PYTHONPATH"] = f"{PUGAUSSIAN_ROOT}:{env.get('PYTHONPATH', '')}"
+    env.setdefault("CUDA_DEVICE_ORDER", "PCI_BUS_ID")
+    env.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
     cmd = [
         sys.executable,
         "-u",
@@ -61,7 +64,18 @@ def run_official_inference(
         "--training_stage",
         training_stage,
     ]
-    common.run(cmd, cwd=PUGAUSSIAN_ROOT)
+    print(f"[cmd] {' '.join(str(x) for x in cmd)}", flush=True)
+    last_error = None
+    for attempt in range(1, 4):
+        if attempt > 1:
+            wait_seconds = 30 * attempt
+            print(f"[retry] PU-Gaussian inference attempt {attempt}/3 after {wait_seconds}s", flush=True)
+            time.sleep(wait_seconds)
+        result = subprocess.run([str(x) for x in cmd], cwd=str(PUGAUSSIAN_ROOT), env=env)
+        if result.returncode == 0:
+            return
+        last_error = subprocess.CalledProcessError(result.returncode, [str(x) for x in cmd])
+    raise last_error
 
 
 def read_open3d_points(path: Path) -> np.ndarray:
