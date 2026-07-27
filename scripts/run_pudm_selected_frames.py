@@ -21,6 +21,22 @@ DEFAULT_CONFIG = PUDM_ROOT / "pointnet2" / "exp_configs" / "PU1K.json"
 DEFAULT_CKPT = PUDM_ROOT / "pointnet2" / "pkls" / "pu1k.pkl"
 
 
+def merge_rows(path: Path, new_rows: list[dict], key_fields: list[str], fieldnames: list[str]) -> None:
+    """Write CSV rows while preserving prior rows outside the current resume set."""
+    merged: dict[tuple[str, ...], dict] = {}
+    if path.exists():
+        with path.open(newline="", encoding="ascii") as handle:
+            reader = csv.DictReader(handle)
+            for row in reader:
+                merged[tuple(row.get(field, "") for field in key_fields)] = row
+    for row in new_rows:
+        merged[tuple(str(row.get(field, "")) for field in key_fields)] = row
+    with path.open("w", newline="", encoding="ascii") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(sorted(merged.values(), key=lambda row: tuple(row.get(field, "") for field in key_fields)))
+
+
 def setup_pudm_imports() -> None:
     os.environ.setdefault("PCE_FORCE_PUDM_FALLBACKS", "1")
     sys.path.insert(0, str(PUDM_ROOT))
@@ -160,19 +176,20 @@ def main() -> None:
             comparisons.append({"frame": frame, "metric": metric, "baseline": baseline[metric], args.method_name: method_metrics[metric], "delta_for_better": delta, f"{args.method_name}_improved": improved})
 
     metric_names = [key for key in rows[0] if key not in {"method", "sequence", "frame", "pred_file", "gt_file"}]
-    with (metric_root / "per_frame_metrics.csv").open("w", newline="", encoding="ascii") as handle:
-        writer = csv.DictWriter(handle, fieldnames=["method", "sequence", "frame", "pred_file", "gt_file", *metric_names])
-        writer.writeheader()
-        writer.writerows(rows)
-    with (metric_root / f"baseline_vs_{args.method_name}_by_frame.csv").open("w", newline="", encoding="ascii") as handle:
-        writer = csv.DictWriter(handle, fieldnames=["frame", "metric", "baseline", args.method_name, "delta_for_better", f"{args.method_name}_improved"])
-        writer.writeheader()
-        writer.writerows(comparisons)
-    with (metric_root / "point_counts.csv").open("w", newline="", encoding="ascii") as handle:
-        writer = csv.DictWriter(handle, fieldnames=["frame", "input_points", "output_points", "has_color"])
-        writer.writeheader()
-        writer.writerows(counts)
-    common.write_summary(rows, metric_root / "summary_metrics.csv")
+    metrics_path = metric_root / "per_frame_metrics.csv"
+    comparison_path = metric_root / f"baseline_vs_{args.method_name}_by_frame.csv"
+    counts_path = metric_root / "point_counts.csv"
+    merge_rows(metrics_path, rows, ["method", "frame"], ["method", "sequence", "frame", "pred_file", "gt_file", *metric_names])
+    merge_rows(
+        comparison_path,
+        comparisons,
+        ["frame", "metric"],
+        ["frame", "metric", "baseline", args.method_name, "delta_for_better", f"{args.method_name}_improved"],
+    )
+    merge_rows(counts_path, counts, ["frame"], ["frame", "input_points", "output_points", "has_color"])
+    with metrics_path.open(newline="", encoding="ascii") as handle:
+        summary_rows = list(csv.DictReader(handle))
+    common.write_summary(summary_rows, metric_root / "summary_metrics.csv")
     (metric_root / "run_config.json").write_text(json.dumps(vars(args), indent=2, default=str), encoding="ascii")
 
 
