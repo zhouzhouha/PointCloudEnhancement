@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import open3d as o3d
 import torch
 
 import run_mag_selected_frames as common
@@ -109,6 +110,15 @@ def run_chunked(model, diffusion_hyperparams, points: np.ndarray, device: str, c
     return np.concatenate(outputs, axis=0).astype(np.float32)
 
 
+def write_binary_xyzrgb_ply(path: Path, points: np.ndarray, colors: np.ndarray) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(points.astype(np.float64, copy=False))
+    pcd.colors = o3d.utility.Vector3dVector(np.clip(colors, 0, 255).astype(np.float64, copy=False) / 255.0)
+    if not o3d.io.write_point_cloud(str(path), pcd, write_ascii=False, compressed=False):
+        raise RuntimeError(f"Failed to write binary PLY: {path}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run PUDM selected frames")
     parser.add_argument("--sequence", default="OrangeKettlebell")
@@ -163,7 +173,7 @@ def main() -> None:
         )
         enhanced_colors = common.transfer_nearest_colors(source_points, source_colors, enhanced_points)
         out = out_root / f"frame_{frame}.ply"
-        common.write_xyzrgb_ply(out, enhanced_points, enhanced_colors)
+        write_binary_xyzrgb_ply(out, enhanced_points, enhanced_colors)
         counts.append({"frame": frame, "input_points": len(source_points), "output_points": len(enhanced_points), "has_color": True})
         print(f"{frame}: {len(source_points)} -> {len(enhanced_points)} points, output={out}", flush=True)
 
